@@ -1,0 +1,1218 @@
+{
+ "generatedAt": "2026-10-15T21:15:23+08:00",
+ "source": "TDX 新北市公車 EstimatedTimeOfArrival / StopOfRoute（站序對齊）",
+ "sections": [
+  {
+   "title": "社巴平日去程",
+   "routeName": null,
+   "direction": null,
+   "stops": []
+  },
+  {
+   "title": "社巴平日回程",
+   "routeName": null,
+   "direction": null,
+   "stops": []
+  },
+  {
+   "title": "社巴假日去程",
+   "routeName": null,
+   "direction": null,
+   "stops": []
+  },
+  {
+   "title": "社巴假日回程",
+   "routeName": null,
+   "direction": null,
+   "stops": []
+  },
+  {
+   "title": "591公車平、假日去程",
+   "routeName": "591",
+   "direction": 0,
+   "stops": [
+    {
+     "stopID": "205913",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204478",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204479",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204480",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204481",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204482",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204483",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204484",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204485",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204486",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204487",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204488",
+     "estimateTime": 272,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204489",
+     "estimateTime": 326,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204490",
+     "estimateTime": 482,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204491",
+     "estimateTime": 549,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    }
+   ]
+  },
+  {
+   "title": "591公車平、假日回程",
+   "routeName": "591",
+   "direction": 1,
+   "stops": [
+    {
+     "stopID": "204464",
+     "estimateTime": 675,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204465",
+     "estimateTime": 756,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204466",
+     "estimateTime": 906,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204467",
+     "estimateTime": 965,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204468",
+     "estimateTime": 1180,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204469",
+     "estimateTime": 1328,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204470",
+     "estimateTime": 1453,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204471",
+     "estimateTime": 1550,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204472",
+     "estimateTime": 1689,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204473",
+     "estimateTime": 1747,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204474",
+     "estimateTime": 1804,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204475",
+     "estimateTime": 1964,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204476",
+     "estimateTime": 2077,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    },
+    {
+     "stopID": "204477",
+     "estimateTime": 2148,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+    }
+   ]
+  },
+  {
+   "title": "F913社后線公車平日及假日去程",
+   "routeName": "F913",
+   "direction": 0,
+   "stops": [
+    {
+     "stopID": "219525",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181402",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181403",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181404",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181405",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181406",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181407",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181408",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181409",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181410",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181411",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181412",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181413",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181414",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181415",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181416",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181417",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181418",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181419",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181420",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181421",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181422",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181423",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181424",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181425",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "203213",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181426",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181427",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181428",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181429",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181430",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181431",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181432",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181433",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181434",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "194261",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "194262",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "194264",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    }
+   ]
+  },
+  {
+   "title": "F913社后線公車平日及假日回程",
+   "routeName": "F913",
+   "direction": 0,
+   "stops": [
+    {
+     "stopID": "194264",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "219532",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181436",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181437",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181438",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181439",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181440",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181441",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181442",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181443",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181444",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181445",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181446",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181447",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181448",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181449",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181450",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "203214",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181451",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181452",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181453",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181454",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181455",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181456",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181457",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181458",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181459",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181460",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181461",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181462",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181463",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181464",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181465",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181466",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181467",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181468",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181469",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181470",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181471",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "194266",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    }
+   ]
+  },
+  {
+   "title": "F913社后線延(忠三街口)公車平日及假日去程",
+   "routeName": "F913",
+   "direction": 0,
+   "stops": [
+    {
+     "stopID": "219525",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181402",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181403",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181404",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181405",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181406",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181407",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181408",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181409",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181410",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181411",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181412",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181413",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181414",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181415",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181416",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181417",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181418",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181419",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181420",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181421",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181422",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181423",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181424",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181425",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "203213",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181426",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181427",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181428",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181429",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181430",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181431",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181432",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181433",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181434",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "194261",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "194262",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "219526",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "219527",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "219528",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "219529",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    }
+   ]
+  },
+  {
+   "title": "F913社后線延(忠三街口)公車平日及假日回程",
+   "routeName": "F913",
+   "direction": 0,
+   "stops": [
+    {
+     "stopID": "219529",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "219530",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "219531",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "194264",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "219532",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181436",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181437",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181438",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181439",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181440",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181441",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181442",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181443",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181444",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181445",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181446",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181447",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181448",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181449",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181450",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "203214",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181451",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181452",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181453",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181454",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181455",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181456",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181457",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181458",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181459",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181460",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181461",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181462",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181463",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181464",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181465",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181466",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181467",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181468",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181469",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181470",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "181471",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    },
+    {
+     "stopID": "194266",
+     "estimateTime": null,
+     "stopStatus": 3,
+     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+    }
+   ]
+  }
+ ]
+}

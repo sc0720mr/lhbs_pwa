@@ -1,0 +1,37 @@
+{
+  "name": "水蓮社區巴士及公車時刻表",
+  "short_name": "水蓮巴士",
+  "description": "水蓮山莊社區巴士、591、F913、F913延時刻表與站點即時資訊",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4fbfa",
+  "theme_color": "#0f766e",
+  "lang": "zh-Hant-TW",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon/favicon-196x196.png",
+      "sizes": "196x196",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon/favicon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon/apple-touch-icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon/apple-touch-icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

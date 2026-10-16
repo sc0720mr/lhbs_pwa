@@ -1272,5 +1272,8 @@
 
 
 
-<script defer="" src="js/ad.js?v=1.0.5"></script><script defer="" src="js/lhbs_114.js?v=1.0.48"></script><script>/* 若要啟用 TDX 即時模式（每 30 秒自動更新），請填入你的代理端點網址（見 worker/worker-setup.md）；留空則使用建置時快照，並標示為非即時。 */ window.TDX_PROXY_URL = '';</script><script defer="" src="js/tdx_eta_v2.js?v=1"></script><script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js').catch(console.error); }); }</script></body>
+<script defer="" src="js/ad.js?v=1.0.5"></script><script defer="" src="js/lhbs_114.js?v=1.0.48"></script>
+<script>/* 若要啟用 TDX 即時模式（每 30 秒自動更新），請填入你的代理端點網址（見 worker/worker-setup.md）；留空則使用建置時快照，並標示為非即時。 */ window.TDX_PROXY_URL = 'https://lhbs-tdx-proxy.sc0720mr.workers.dev';</script>
+<script defer="" src="js/tdx_eta_v2.js?v=1"></script>
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js').catch(console.error); }); }</script></body>
 </html>

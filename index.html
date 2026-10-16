@@ -38,7 +38,7 @@
 <meta content="icon/mstile-150x150.png" name="msapplication-square150x150logo"/>
 <meta content="icon/mstile-310x150.png" name="msapplication-wide310x150logo"/>
 <meta content="icon/mstile-310x310.png" name="msapplication-square310x310logo"/>
-<link href="css/lhbs.css?v=1.0.21" rel="stylesheet"/>
+<link href="css/lhbs.css?v=1.0.22" rel="stylesheet"/>
 <title>水蓮山莊社區巴士及公車時刻表</title>
 <meta content="#0f766e" name="theme-color"/><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="default" name="apple-mobile-web-app-status-bar-style"/><link href="manifest.json" rel="manifest"/></head>
 <body>
@@ -1272,8 +1272,42 @@
 
 
 
-<script defer="" src="js/ad.js?v=1.0.5"></script><script defer="" src="js/lhbs_114.js?v=1.0.48"></script>
-<script>/* 若要啟用 TDX 即時模式（每 30 秒自動更新），請填入你的代理端點網址（見 worker/worker-setup.md）；留空則使用建置時快照，並標示為非即時。 */ window.TDX_PROXY_URL = 'https://lhbs-tdx-proxy.sc0720mr.workers.dev';</script>
-<script defer="" src="js/tdx_eta_v2.js?v=1"></script>
-<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js').catch(console.error); }); }</script></body>
+<script defer="" src="js/ad.js?v=1.0.6"></script><script defer="" src="js/lhbs_114.js?v=1.0.49"></script><script>/* 若要啟用 TDX 即時模式（每 30 秒自動更新），請填入你的代理端點網址（見 worker/worker-setup.md）；留空則使用建置時快照，並標示為非即時。 */ window.TDX_PROXY_URL = 'https://lhbs-tdx-proxy.sc0720mr.workers.dev';</script><script defer="" src="js/tdx_eta_v2.js?v=3"></script><script>
+/* Service Worker 註冊（v9）
+ *  updateViaCache:'none' → 每次都向伺服器確認 service-worker.js 是否更新，
+ *    避免瀏覽器一直沿用舊的 SW 而卡在舊快取。
+ *  偵測到新 SW 時，主動要求它立即接手並重新載入一次頁面，
+ *    使用者不必手動清快取就能看到最新版。
+ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js', { updateViaCache: 'none' })
+      .then(reg => {
+        /* 有新版 SW 正在等待接手時，請它立即生效並重載一次 */
+        const activateNow = (worker) => {
+          if (!worker) return;
+          worker.addEventListener('statechange', () => {
+            if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+              worker.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        };
+        if (reg.waiting) { reg.waiting.postMessage({ type: 'SKIP_WAITING' }); }
+        if (reg.installing) { activateNow(reg.installing); }
+        reg.addEventListener('updatefound', () => activateNow(reg.installing));
+        /* 每次進站檢查一次是否有新版 SW */
+        reg.update().catch(() => {});
+      })
+      .catch(console.error);
+
+    /* 新版 SW 接手後，重新載入一次以套用最新 HTML/JS/CSS */
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (reloading) return;
+      reloading = true;
+      window.location.reload();
+    });
+  });
+}
+</script></body>
 </html>

@@ -1,7 +1,7 @@
 # 水蓮巴士 PWA — 部署與使用說明
 
 本資料夾是完整的 PWA 網站（可直接放到任何靜態主機）。
-本版重點：**站點資訊分頁每 30 秒自動更新 TDX 到站資料**，並修正搜尋後的區段間距。
+本版重點：**站點資訊分頁每 30 秒自動更新 TDX 到站資料**，並修正「檔案已上傳但瀏覽器一直看到舊版」的快取問題。
 
 ---
 
@@ -88,6 +88,20 @@ https://sc0720mr.github.io/lhbs_pwa/
 
 > ⚠️ **必須使用 HTTPS**（GitHub Pages 預設提供），Service Worker 與「安裝 App」才會運作。
 
+### 強烈建議：改用 GitHub Actions 部署（避免「上傳了但網站沒更新」）
+
+`Deploy from a branch` 是舊式建置，偶爾會延遲或漏掉觸發，導致 repo 裡的檔案明明已是新版，
+但網站仍供應舊建置。本包已提供可直接使用的 workflow 檔案：
+
+1. 在 repo 根目錄建立資料夾 `.github/workflows/`。
+2. 把本包 `tools/pages-workflow.yml` 複製進去，並改名為 `pages.yml`
+   （完整路徑要是 `.github/workflows/pages.yml`）。
+3. 到 **Settings → Pages**，把 **Source** 從 `Deploy from a branch` 改選 **`GitHub Actions`**。
+4. 之後每次 push 到 `main`，**Actions** 分頁都會出現一次明確、可追蹤的部署紀錄；
+   若部署失敗也會直接告訴你是哪一步出錯。
+
+> 改選 GitHub Actions 後，原本的 branch 設定就不會再使用，網址不變。
+
 ---
 
 ## 四、手機安裝 PWA
@@ -153,9 +167,10 @@ PWA 的 Service Worker 會快取檔案，更新後手機可能仍顯示舊版。
    - **Android Chrome**：網址列左側「鎖頭／調整」圖示 → 網站設定 → **清除與重設** → 回到網站重新整理。
    - **iOS Safari**：設定 App → Safari → 進階 → 網站資料 → 找到該網站 → 刪除；或刪除主畫面圖示後重新「加入主畫面」。
    - **電腦版 Chrome**：F12 開發者工具 → **Application** → **Service Workers** → 勾 **Update on reload**；或 **Storage** → **Clear site data**。
-3. 本版已將 Service Worker 快取名稱升為 **`lhbs-pwa-v7`**，樣式版本改為
-   **`lhbs.css?v=1.0.21`**，腳本為 **`tdx_eta_v2.js?v=1`**，正常情況下重新整理即會取得新版。
-   （樣式版本一定要換，否則住戶瀏覽器會沿用舊的 lhbs.css 快取，看不到新的區段間距。）
+3. 本版已將 Service Worker 快取名稱升為 **`lhbs-pwa-v9`**，樣式為
+   **`lhbs.css?v=1.0.22`**，腳本為 **`tdx_eta_v2.js?v=3`**；且 `index.html` 與快照已改為
+   **網路優先（network-first）**，只要上傳新版，重新整理就會拿到最新內容，不再卡舊快取。
+4. 若手機仍顯示舊版，依上方步驟清除網站資料即可；之後就不會再發生。
 
 ---
 

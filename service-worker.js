@@ -1,4 +1,4 @@
-/* 水蓮社區巴士 PWA — Service Worker v32 (greenline, GitHub Pages 根目錄版)
+/* 水蓮社區巴士 PWA — Service Worker v33 (greenline, GitHub Pages 根目錄版)
  * --------------------------------------------------------------------------
  * 這個檔案假設自己被放在 repo 根目錄，也就是 https://sc0720mr.github.io/lhbs_pwa/
  * 因此所有路徑都以「相對本站根目錄」撰寫，不使用開頭的 '/'，
@@ -13,7 +13,7 @@
  * 換版時只要把 CACHE_VERSION 加一，使用者就不會卡在舊快取。
  * ------------------------------------------------------------------------ */
 
-const CACHE_VERSION = 'v32';
+const CACHE_VERSION = 'v33';
 const CACHE_NAME = 'lhbs-greenline-' + CACHE_VERSION;
 
 /* 用相對路徑結尾比對，避免 absolute path 在子目錄下失效 */

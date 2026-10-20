@@ -1142,17 +1142,49 @@ a.ph:focus-visible .ph__call { opacity: 1; color: var(--green-deep); }
   border: 1px solid var(--line);
   border-radius: var(--r-3);
   overflow: hidden;
-  background: var(--surface);
+  background: var(--line-soft);   /* 圖片未載入時的底色，不閃白 */
 }
+/* 唯一的位移來源：原生橫向捲動 + scroll-snap。
+   JS 只用 scrollTo/scrollLeft，不再碰 transform（兩者疊加會把後幾張推出視窗）。 */
 .slider__track {
   display: flex;
   overflow-x: auto;
+  overflow-y: hidden;
   scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  touch-action: pan-x pan-y;
 }
 .slider__track::-webkit-scrollbar { display: none; }
-.slide { flex: 0 0 100%; scroll-snap-align: start; }
-.slide img { width: 100%; height: auto; }
+.slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+  max-width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+/* 用 aspect-ratio 預先佔位：圖片載入前後高度一致，不會跳版 */
+.slide img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--slide-ar, 720 / 1419);
+  object-fit: contain;
+  object-position: top center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+/* 兩組安裝圖比例不同（iOS 720×1419、Android 720×1521），各自宣告避免變形 */
+#androidSlider .slide img { --slide-ar: 720 / 1521; }
+/* 手機截圖是直式長圖：桌機若讓它撐滿版面，單張高度會到 1900px 而破版。
+   這裡把輪播本身收窄並置中；手機維持滿寬（此時 100% 已約 320px）。 */
+@media (min-width: 720px) {
+  .slider { max-width: 360px; margin-inline: auto; }
+}
 .slider__nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .slider__btn {
   width: 38px; height: 36px;

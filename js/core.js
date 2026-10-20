@@ -893,7 +893,7 @@
       var dotsWrap = $('.dots', root);
       var prev = $('[data-slide-prev]', root);
       var next = $('[data-slide-next]', root);
-      var index = 0, timer = null, interacted = false;
+      var index = 0, timer = null, visible = false, syncT = null, resumeT = null;
       if (!viewport || !slides.length) return null;
 
       if (dotsWrap) {
@@ -904,43 +904,83 @@
       }
       var dots = $$('.dot', root);
 
-      function go(i) {
-        index = (i + slides.length) % slides.length;
-        viewport.style.transform = 'translateX(-' + (index * 100) + '%)';
+      /* ---- 位移一律走原生捲動（scrollLeft）---------------------------------
+         舊版同時設定 transform 與依賴 scroll-snap 的原生捲動，等於兩套位移
+         系統並存：自動輪播只改 transform、手動滑動只改 scrollLeft，兩者
+         疊加後第 2 張之後的內容被推到視窗外，看起來就是「一片空白」。
+         現在只保留一條路徑：slides 用 flex-basis:100%，JS 只呼叫 scrollTo。 */
+      function slideW() {
+        var w = slides[0].getBoundingClientRect().width;
+        return w > 1 ? w : viewport.clientWidth;
+      }
+      function maxLeft() {
+        return Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+      }
+      function paint() {
         dots.forEach(function (d, di) { d.setAttribute('aria-selected', di === index ? 'true' : 'false'); });
+        dots.forEach(function (d, di) { d.tabIndex = di === index ? 0 : -1; });
         slides.forEach(function (s, si) { s.setAttribute('aria-hidden', si === index ? 'false' : 'true'); });
       }
+      function go(i, instant) {
+        if (!slides.length) return;
+        index = (i + slides.length) % slides.length;
+        paint();
+        var w = slideW();
+        if (!w) return;                     /* 面板隱藏時量不到寬度，show() 會再補一次 */
+        var left = Math.min(index * w, maxLeft());
+        if (instant || rm || !viewport.scrollTo) { viewport.scrollLeft = left; return; }
+        viewport.scrollTo({ left: left, behavior: 'smooth' });
+      }
+      function syncFromScroll() {
+        var w = slideW();
+        if (!w) return;
+        var i = Math.round(viewport.scrollLeft / w);
+        i = Math.max(0, Math.min(slides.length - 1, i));
+        if (i !== index) { index = i; paint(); }
+      }
       function start() {
-        if (rm || timer) return;
-        timer = setInterval(function () { if (!interacted) go(index + 1); }, 6000);
+        if (rm || timer || !visible) return;
+        timer = setInterval(function () { go(index + 1); }, 6000);
       }
       function pause() { if (timer) { clearInterval(timer); timer = null; } }
+      /* 手動操作後只暫停 9 秒就恢復 —— 舊版一旦互動就永久停擺 */
+      function interact(fn) {
+        fn();
+        pause();
+        if (resumeT) clearTimeout(resumeT);
+        resumeT = setTimeout(function () { if (visible) start(); }, 9000);
+      }
+      function show() { visible = true; go(index, true); start(); }
+      function hide() { visible = false; pause(); if (resumeT) { clearTimeout(resumeT); resumeT = null; } }
+      function refresh() { if (visible) go(index, true); }
 
-      if (prev) prev.addEventListener('click', function () { interacted = true; go(index - 1); });
-      if (next) next.addEventListener('click', function () { interacted = true; go(index + 1); });
-      dots.forEach(function (d, i) { d.addEventListener('click', function () { interacted = true; go(i); }); });
+      if (prev) prev.addEventListener('click', function () { interact(function () { go(index - 1); }); });
+      if (next) next.addEventListener('click', function () { interact(function () { go(index + 1); }); });
+      dots.forEach(function (d, i) { d.addEventListener('click', function () { interact(function () { go(i); }); }); });
 
-      var sx = 0, sy = 0, dragging = false;
-      root.addEventListener('touchstart', function (e) {
-        if (e.touches.length !== 1) return;
-        sx = e.touches[0].clientX; sy = e.touches[0].clientY; dragging = true;
-      }, { passive: true });
-      root.addEventListener('touchend', function (e) {
-        if (!dragging) return;
-        dragging = false;
-        var dx = e.changedTouches[0].clientX - sx;
-        var dy = e.changedTouches[0].clientY - sy;
-        if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) { interacted = true; go(index + (dx < 0 ? 1 : -1)); }
-      }, { passive: true });
+      /* 觸控滑動交給原生捲動 + scroll-snap，JS 不再自己做位移 */
       root.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowLeft') { interacted = true; go(index - 1); }
-        if (e.key === 'ArrowRight') { interacted = true; go(index + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); interact(function () { go(index - 1); }); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); interact(function () { go(index + 1); }); }
       });
       root.addEventListener('mouseenter', pause);
+      root.addEventListener('mouseleave', function () { if (visible) start(); });
       root.addEventListener('focusin', pause);
 
-      go(0);
-      return { start: start, pause: pause };
+      /* 手動滑動：只讀捲動結果，不回寫位移 */
+      viewport.addEventListener('scroll', function () {
+        if (syncT) clearTimeout(syncT);
+        syncT = setTimeout(syncFromScroll, 80);
+      }, { passive: true });
+
+      /* 轉向／縮放／字級變化後重新對齊，避免停在兩張之間 */
+      window.addEventListener('resize', function () { if (visible) go(index, true); });
+      if (window.ResizeObserver) {
+        new ResizeObserver(function () { if (visible) go(index, true); }).observe(viewport);
+      }
+
+      paint();
+      return { show: show, hide: hide, start: start, pause: pause, refresh: refresh };
     }
 
     $$('.slider').forEach(function (root) {
@@ -949,8 +989,8 @@
     });
 
     return {
-      playAll: function () { instances.forEach(function (i) { i.start(); }); },
-      pauseAll: function () { instances.forEach(function (i) { i.pause(); }); }
+      playAll: function () { instances.forEach(function (s) { s.show(); }); },
+      pauseAll: function () { instances.forEach(function (s) { s.hide(); }); }
     };
   })();
 

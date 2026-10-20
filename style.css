@@ -923,7 +923,18 @@ img { max-width: 100%; display: block; }
   margin: 0; padding: 4px 0 8px;
   list-style: none;
 }
-.stop-item { position: relative; }
+/* 每列：圓點 → 站名（唯一可點）→ ↗ 提示 → 到站時間（靠右）。
+   全部 align-items:center，時間與站名同一水平線。
+   刻意用 flex 而非 grid：grid 自動排布會把第 3 欄的 .eta 擠到第二列
+   （實測 cyDelta 30.4px），這正是「一上一下」的成因。 */
+.stop-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 14px 12px 0;
+}
 .stop-item[hidden] { display: none; }
 
 /* 實色填充粗線：3px，貫穿整段；圓點疊在其上 */
@@ -940,22 +951,12 @@ img { max-width: 100%; display: block; }
 .stop-item:first-child::before { top: 50%; }
 .stop-item:last-child::before { bottom: 50%; }
 
-.stop-link {
-  display: grid;
-  grid-template-columns: 44px 1fr auto auto;
-  align-items: center;
-  gap: 8px;
-  min-height: 50px;
-  padding: 0 15px 0 0;
-  position: relative;
-  transition: background .12s var(--ease);
-}
-.stop-link:hover { background: var(--line-soft); }
+/* .stop-link 已移除：整列可點是誤點來源，改由 .stop-name-text 單獨承擔連結。 */
 
 /* 圓點：疊在粗線之上，線條穿過圓點中心 */
 .stop-dot {
-  grid-column: 1;
-  justify-self: center;
+  flex: 0 0 15px;
+  margin-left: 14.5px;        /* 圓點中心 = 22px，與 3px 粗線中心對齊 */
   width: 15px; height: 15px;
   border-radius: 50%;
   background: var(--card);
@@ -985,25 +986,40 @@ img { max-width: 100%; display: block; }
   .stop-dot.is-approaching { animation: none; }
 }
 
+/* 唯一可點區域：只有站名文字。flex 0 1 auto → 寬度只等於文字，
+   右側空白不屬於連結；hover / focus 給出底線與綠色，明示可點。 */
 .stop-name-text {
-  grid-column: 2;
+  flex: 0 1 auto;
   min-width: 0;
   font-size: 15px;
+  line-height: 1.5;
   color: var(--ink);
+  text-decoration: none;
+  border-radius: var(--r-1);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: color .12s var(--ease);
 }
+.stop-name-text:hover,
+.stop-name-text:focus-visible {
+  color: var(--green-deep);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
+}
+.stop-name-text:focus-visible { outline: 2px solid var(--green-deep); outline-offset: 3px; }
+/* ↗ 外連提示：純裝飾、不可點，所以放在 <a> 之外 */
 .stop-go {
-  grid-column: 4;
-  font-size: 14px;
+  flex: 0 0 auto;
+  font-size: 13px;
+  line-height: 1;
   color: var(--ink-3);
-  opacity: 0;
+  opacity: .55;
   transition: opacity .14s var(--ease), color .14s var(--ease);
-  flex: none;
 }
-.stop-link:hover .stop-go,
-.stop-link:focus-visible .stop-go { opacity: 1; color: var(--green-deep); }
-/* TDX 預估到站時間：接在站名之後 */
-.stop-link .eta { grid-column: 3; }
+.stop-name-text:hover + .stop-go,
+.stop-name-text:focus-visible + .stop-go { opacity: 1; color: var(--green-deep); }
+/* TDX 預估到站時間：靠右、與站名同一水平線 */
+.stop-item > .eta { flex: 0 0 auto; margin-left: auto; white-space: nowrap; }
 
 /* --------------------------------------------------------------------------
    PHONE

@@ -11,9 +11,14 @@
  *   4) 支援 SKIP_WAITING，讓頁面要求新版立即接手
  *
  * 換版時只要把 CACHE_VERSION 加一，使用者就不會卡在舊快取。
+ *
+ * ⚠️ 常見陷阱（v35 起特別標記）：
+ *    index.html 的 ?v= 與這裡的 CACHE_VERSION 必須「一起」加一。
+ *     只改其中一個，瀏覽器會因爲網址相同而命中舊快取，
+ *     就會出現「檔案已經改了、畫面卻還是舊的」。
  * ------------------------------------------------------------------------ */
 
-const CACHE_VERSION = 'v33';
+const CACHE_VERSION = 'v35';
 const CACHE_NAME = 'lhbs-greenline-' + CACHE_VERSION;
 
 /* 用相對路徑結尾比對，避免 absolute path 在子目錄下失效 */
@@ -53,7 +58,11 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(
-        keys.filter(k => k !== CACHE_NAME && k.indexOf('lhbs') === 0).map(k => caches.delete(k))
+        /* 這個 origin 只有本 PWA 在用快取，所以「非當前版本一律刪」。
+           從 v35 起不再只挑 'lhbs' 開頭的名字 —— 舊站曾用
+           lhbs-pwa-v9 / lhbs-greenline-v34 等不同命名，
+           限定前綴會漏掉它們，導致新舊快取並存。 */
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
       ))
       .then(() => self.clients.claim())
   );

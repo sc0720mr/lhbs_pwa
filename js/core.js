@@ -15,6 +15,34 @@
 (function () {
   'use strict';
 
+  /* ---------------------------------------------------------------------
+     版本識別：下載後想確認「線上跑的是哪一版」，看這裡。
+     三個地方會同時出現同一組版本號：
+       1) DevTools Console 的綠底標籤
+       2) 網址後面加 ?v=check 時底部出現的檔案
+       3) <meta name="app-version"> 與 <meta name="app-cache-version">
+     三者不一致，就代表檔案沒蓋好或快取還在供應舊版。
+     --------------------------------------------------------------------- */
+  var BUILD = 'LHBS build 5.2.0 / cache v35';
+  try {
+    console.log('%c' + BUILD, 'background:#08B898;color:#04231C;font-weight:700;padding:3px 8px;border-radius:2px');
+  } catch (e) { /* console 不可用時忽略 */ }
+
+  function showVersionBadge() {
+    if (location.search.indexOf('v=check') === -1) return;
+    var sheet = document.querySelector('link[rel="stylesheet"]');
+    var el = document.createElement('div');
+    el.id = 'versionCheck';
+    el.setAttribute('role', 'status');
+    el.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;' +
+      'background:#0B0E13;color:#fff;border-top:3px solid #08B898;' +
+      'font:600 13px/1.6 ui-monospace,Menlo,monospace;padding:11px 16px;text-align:center';
+    el.textContent = BUILD + ' \uff5c CSS: ' + (sheet ? sheet.getAttribute('href') : 'n/a');
+    document.body.appendChild(el);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showVersionBadge);
+  else showVersionBadge();
+
   var DATA = window.LHBS_DATA || {
     normalSchedule: {}, typhoonSchedule: {}, sections: [], phoneGroups: [], version: ''
   };
@@ -479,12 +507,14 @@
     var maps = st.lat
       ? 'https://www.google.com/maps/dir/?api=1&destination=' + st.lat + ',' + st.lng
       : '#';
+    /* 只有「站名文字」本身是連結。<li> 不再包 <a>，所以點時間、點右側空白
+       都不會誤觸導航。時間軸圓點與 ↗ 都留在 <li> 上，純裝飾、不可點。 */
     return '<li class="stop-item" data-name="' + escapeHtml(st.name) + '">' +
-      '<a class="stop-link" href="' + maps + '" target="_blank" rel="noopener noreferrer">' +
-        '<span class="stop-dot" aria-hidden="true"></span>' +
-        '<span class="stop-name-text">' + escapeHtml(st.name) + '</span>' +
-        '<span class="stop-go" aria-hidden="true">↗</span>' +
+      '<span class="stop-dot" aria-hidden="true"></span>' +
+      '<a class="stop-name-text" href="' + maps + '" target="_blank" rel="noopener noreferrer">' +
+        escapeHtml(st.name) +
       '</a>' +
+      '<span class="stop-go" aria-hidden="true">↗</span>' +
     '</li>';
   }
 
@@ -684,7 +714,7 @@
           if (!st) return;
           var rec = map[keyOf(sec.routeName, sec.direction, st.stopID)];
           var text = formatEta(rec);
-          var host = item.querySelector('.stop-link');
+          var host = item;
           var old = item.querySelector('.eta');
           var dot = item.querySelector('.stop-dot');
           /* 即將抵達（<= 3 分鐘或進站中）：圓點閃爍，與首頁「下班車」同一組動畫 */

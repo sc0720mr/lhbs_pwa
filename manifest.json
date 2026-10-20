@@ -1,6 +1,6 @@
 {
-  "name": "水蓮社巴 · 時刻表",
-  "short_name": "水蓮社巴",
+  "name": "水蓮車班時刻表",
+  "short_name": "水蓮車班時刻表",
   "description": "水蓮山莊社區巴士、591、F913 時刻表與站點即時到站資訊",
   "id": "/lhbs_pwa/",
   "start_url": "./index.html",

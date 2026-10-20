@@ -1,13 +1,25 @@
 {
-  "name": "水蓮社區巴士及公車時刻表",
-  "short_name": "水蓮巴士",
-  "description": "水蓮山莊社區巴士、591、F913、F913延時刻表與站點即時資訊",
+  "name": "水蓮社巴 · 時刻表",
+  "short_name": "水蓮社巴",
+  "description": "水蓮山莊社區巴士、591、F913 時刻表與站點即時到站資訊",
+  "id": "/lhbs_pwa/",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#f4fbfa",
-  "theme_color": "#0f766e",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#F6F7F9",
+  "theme_color": "#0B0E13",
   "lang": "zh-Hant-TW",
+  "dir": "ltr",
   "orientation": "portrait-primary",
+  "categories": [
+    "travel",
+    "navigation",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "icon/favicon-196x196.png",
@@ -22,16 +34,45 @@
       "purpose": "any"
     },
     {
-      "src": "icon/apple-touch-icon-152x152.png",
-      "sizes": "152x152",
+      "src": "icon/apple-touch-icon-180x180.png",
+      "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "查看時刻表",
+      "short_name": "時刻表",
+      "url": "./index.html#schedule",
+      "icons": [
+        {
+          "src": "icon/favicon-196x196.png",
+          "sizes": "196x196"
+        }
+      ]
     },
     {
-      "src": "icon/apple-touch-icon-144x144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any"
+      "name": "站點與即時到站",
+      "short_name": "站點",
+      "url": "./index.html#stops",
+      "icons": [
+        {
+          "src": "icon/favicon-196x196.png",
+          "sizes": "196x196"
+        }
+      ]
+    },
+    {
+      "name": "社區服務電話",
+      "short_name": "電話",
+      "url": "./index.html#phone",
+      "icons": [
+        {
+          "src": "icon/favicon-196x196.png",
+          "sizes": "196x196"
+        }
+      ]
     }
   ]
 }

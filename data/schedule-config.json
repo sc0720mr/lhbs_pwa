@@ -1,0 +1,22 @@
+{
+  "_readme": "本檔是「公告」與「颱風日」的唯一真實來源。之後要換公告或標記颱風日，只改這個檔案，不需要動 js/core.js。改完記得把 index.html 與 service-worker.js 的版號一起加一（見 service-worker.js 開頭的提醒）。",
+
+  "_alerts_format": "alerts 是陣列，每一則包含 id（必填、唯一，用來記住使用者已關閉哪一則）、message（橫幅內文）、startTime / endTime（ISO 8601 本地時間）。時間一過就不會顯示；全部過期時主控台會出現警告提醒維護者。",
+
+  "_typhoonDays_format": "typhoonDays 是日期字串陣列，格式固定 YYYY/MM/DD（必須與瀏覽器 toLocaleDateString('zh-TW') 的輸出格式一致，不能寫成 2026-11-01）。列在此處的日期會自動切換為颱風班表、把日期切到「假日」，並顯示颱風日公告。",
+
+  "_example": {
+    "alerts": [
+      {
+        "id": "2026-11-easycard",
+        "message": "搭乘社巴使用悠遊卡或悠遊付乘車碼，請【上車刷卡一次】即可，到站可直接下車。",
+        "startTime": "2026-11-01T00:00:00",
+        "endTime": "2026-11-30T23:59:59"
+      }
+    ],
+    "typhoonDays": ["2026/07/11"]
+  },
+
+  "alerts": [],
+  "typhoonDays": []
+}

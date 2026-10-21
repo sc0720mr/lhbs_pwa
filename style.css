@@ -63,6 +63,14 @@
   /* --- 陰影：只給彈窗 --- */
   --shadow-modal: 0 16px 48px rgba(0, 0, 0, .28), 0 2px 8px rgba(0, 0, 0, .16);
 
+  /* --- 主要按鈕：hover 用另一顆 token，永不硬寫色值 -------------------
+     亮色模式 --ink 是近黑（#0E1116）、暗色模式 --ink 是近白（#F4F6F9）。
+     同一條 hover 規則不可能同時服務兩者：硬寫 #000 會讓暗色模式變成
+     「近白字壓在黑底」（實測 1.13:1，字等於消失）。
+     hover 顏色必須是「跟主題一起翻轉」的 token。 */
+  --btn-primary-bg: var(--ink);
+  --btn-primary-bg-hover: #232935;   /* 亮色：比 --ink 亮一階，白字 14.6:1 */
+
   /* --- 字體 --- */
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC",
           "Microsoft JhengHei", Roboto, "Helvetica Neue", sans-serif;
@@ -94,6 +102,7 @@
   --route-f913: #D0A05C;
   --route-all: #9BA5B3;
   --shadow-modal: 0 16px 48px rgba(0, 0, 0, .6);
+  --btn-primary-bg-hover: #DCE2EB;   /* 暗色：比 --ink 暗一階，深字 13.5:1 */
 }
 
 /* --------------------------------------------------------------------------
@@ -463,12 +472,17 @@ img { max-width: 100%; display: block; }
 .ctrl--grow { flex: 1 1 auto; min-width: 0; }
 .ctrl--end { margin-left: auto; gap: 14px; }
 
+/* overflow 由 hidden 改為 visible：命中區擴張的 ::after 若被裁掉，
+   垂直方向就永遠到不了 44px（見檔尾「觸控命中區」）。改由首末按鈕
+   自己帶同半徑圓角，視覺與原本完全一致。 */
 .seg {
   display: inline-flex;
   border: 1px solid var(--line);
   border-radius: var(--r-1);
-  overflow: hidden;
+  overflow: visible;
 }
+.seg button:first-child { border-radius: var(--r-1) 0 0 var(--r-1); }
+.seg button:last-child { border-radius: 0 var(--r-1) var(--r-1) 0; }
 .seg button {
   padding: 0 15px; height: 34px;
   font-size: 14px; font-weight: 600;
@@ -595,7 +609,7 @@ img { max-width: 100%; display: block; }
   color: var(--card);
   border-color: var(--ink);
 }
-.btn--primary:hover { background: #000; }
+.btn--primary:hover { background: var(--btn-primary-bg-hover); border-color: var(--btn-primary-bg-hover); }
 .btn:disabled { opacity: .45; cursor: default; }
 .btn:active { transform: translateY(.5px); }
 .btn.is-busy svg { animation: spin .9s linear infinite; }
@@ -702,6 +716,11 @@ img { max-width: 100%; display: block; }
 }
 .dep__from { color: var(--ink-3); flex: none; }
 .dep__sep { color: var(--ink-faint); flex: none; font-size: 13px; }
+/* 起點沿用上一列（dep__dest--cont 由 core.js 產生，原本沒有樣式）：
+   留著箭頭會讓「→ 目的地」的箭頭與其他列的水蓮對不齊，讀起來像破格。
+   改成省略起點、只留目的地並淡一階，讀作「延續上一列」。 */
+.dep__dest--cont .dep__sep { display: none; }
+.dep__dest--cont .dep__to { color: var(--ink-3); font-weight: 500; }
 .dep__to {
   color: var(--ink);
   font-weight: 600;
@@ -719,14 +738,14 @@ img { max-width: 100%; display: block; }
 }
 
 /* 已發車：整列退到背景 */
-.dep.is-past {
-  opacity: .45;
-}
-.dep.is-past .dep__time,
+/* 不要用「整列 opacity」退背景：0.45 疊在淺底上會把 14px 次要文字壓到
+   約 3.0:1，低於 AA 4.5:1 —— 刻意降低對比反而讓「最需要快速掃過的已過班次」
+   變難讀。改成只降「裝飾層」的墨色，文字仍留在可讀範圍（>= 4.5:1）。 */
+.dep.is-past .dep__time { color: var(--ink-3); font-weight: 600; }
 .dep.is-past .dep__dest,
-.dep.is-past .dep__route { color: var(--ink-2); }
+.dep.is-past .dep__route { color: var(--ink-3); }
 .dep.is-past .dep__rel { color: var(--ink-3); }
-.dep.is-past:hover { opacity: .82; }
+.dep.is-past:hover { background: var(--line-soft); }
 
 /* 下一班：只加一條 3px 綠色左緣，不填底色 */
 .dep.is-next {
@@ -784,9 +803,12 @@ img { max-width: 100%; display: block; }
 }
 .search input::placeholder { color: var(--ink-3); }
 .search input::-webkit-search-cancel-button { display: none; }
+/* 28px 對手指太窄：放大到 32px 並用 ::after 補到 44×44。
+   這個鈕平常沒有底色（只有 hover 才出現底），所以放大不影響視覺密度。 */
 .search__clear {
   display: none;
-  width: 28px; height: 28px;
+  position: relative;
+  width: 32px; height: 32px;
   place-items: center;
   border-radius: var(--r-1);
   color: var(--ink-3);
@@ -836,7 +858,11 @@ img { max-width: 100%; display: block; }
   color: var(--ink-3);
   white-space: nowrap;
 }
+/* TDX 有四種狀態（live / snapshot / snapshot-stale / error），
+   原本只定義三種樣式，is-snap 掉回基礎 .mode，導致「快照」與「快照過期」
+   在畫面上完全一樣 —— 使用者分不出資料新不新鮮。 */
 .mode.is-live { border-color: rgba(6, 122, 99, .35); color: var(--green-deep); }
+.mode.is-snap { border-color: var(--line); color: var(--ink-2); background: var(--line-soft); }
 .mode.is-stale { border-color: rgba(138, 78, 18, .35); color: var(--route-f913); }
 .mode.is-error { border-color: rgba(180, 45, 45, .35); color: #A82A2A; }
 [data-theme="dark"] .mode.is-error { color: #E5786F; }
@@ -909,6 +935,22 @@ img { max-width: 100%; display: block; }
   color: var(--ink-3);
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+}
+/* 社巴不是 TDX 路線：core.js 會掛上 has-no-eta，但 CSS 從來沒有這條規則，
+   於是「沒有 ETA」在畫面上只剩一片空白（程式註解寫著「明確標示，而不是留
+   一片空白像壞掉」，意圖與實作脫節）。這裡把意圖補上。 */
+/* 只在「有空間」時才展開：直接接在「N 站」後面會在 390px 下把標題擠成兩行
+   （列高 56px → 76px），而這是 TDX 載入「之後」才發生的變化，
+   等於資料一到就整頁往下跳 20px。窄螢幕改用圖示級標記，不改變列高。 */
+.sect.has-no-eta .sect__count::after {
+  content: " · 無即時到站";
+  font-weight: 500;
+  color: var(--ink-faint);
+}
+@media (max-width: 420px) {
+  .sect.has-no-eta .sect__count::after {
+    content: " · 無到站";
+  }
 }
 .sect__caret {
   color: var(--ink-3);
@@ -991,6 +1033,11 @@ img { max-width: 100%; display: block; }
 .stop-name-text {
   flex: 0 1 auto;
   min-width: 0;
+  /* 命中區：用自身 padding 往外長，再用等量負 margin 抵回，版面零位移。
+     不能用 ::before/::after —— 本元素為了 ellipsis 有 overflow:hidden，
+     會把自己的偽元素一起裁掉（實測命中區仍只有 24px）。 */
+  padding: 11px 2px;
+  margin: -11px -2px;
   font-size: 15px;
   line-height: 1.5;
   color: var(--ink);
@@ -1081,6 +1128,11 @@ a.ph:hover { background: var(--line-soft); }
 }
 a.ph:hover .ph__call,
 a.ph:focus-visible .ph__call { opacity: 1; color: var(--green-deep); }
+/* 手機沒有 hover。原本 opacity:0 讓「撥號」這個 affordance 對主要使用者
+   完全不存在 —— 只能靠「號碼看起來像連結」去猜。觸控裝置上改為常駐。 */
+@media (hover: none) {
+  .ph__call { opacity: .55; }
+}
 .ph--muted .ph__num { color: var(--ink-3); font-size: 15px; }
 
 /* --------------------------------------------------------------------------
@@ -1214,12 +1266,13 @@ a.ph:focus-visible .ph__call { opacity: 1; color: var(--green-deep); }
 .slider__btn svg { width: 17px; height: 17px; }
 .dots { display: flex; gap: 6px; }
 .dots .dot {
+  position: relative;
   width: 6px; height: 6px;
   border-radius: 1px;
   background: var(--line);
   transition: background .15s var(--ease), width .15s var(--ease);
 }
-.dots .dot[aria-selected="true"] { background: var(--green-deep); width: 16px; }
+.dots .dot[aria-current="true"] { background: var(--green-deep); width: 16px; }
 
 .sitefoot {
   margin-top: 4px;
@@ -1386,4 +1439,65 @@ a.ph:focus-visible .ph__call { opacity: 1; color: var(--green-deep); }
   .thead { padding: 10px 18px 10px 21px; }
 
   .modal__card { max-width: 400px; padding: 28px 26px 24px; }
+}
+
+/* --------------------------------------------------------------------------
+   觸控命中區（Touch target）
+   --------------------------------------------------------------------------
+   實測 390px 寬下不合格元素 10 個以上，最嚴重是輪播圓點 16×6、搜尋清除鈕
+   28×28、.btn--xs 30px。原則是「視覺尺寸不變、命中區放大」：用透明
+   ::after 往外長，不改任何既有高度／間距，因此版面零位移。
+   垂直一律補到 >= 44px；水平只補到「不與相鄰元素互相搶點」的範圍。
+   -------------------------------------------------------------------------- */
+.chip,
+.seg button,
+.btn--sm,
+.btn--xs,
+.iconbtn,
+.slider__btn,
+.switch,
+.stop-name-text {
+  position: relative;
+}
+
+.chip::after,
+.seg button::after,
+.btn--sm::after,
+.btn--xs::after,
+.iconbtn::after,
+.slider__btn::after {
+  content: "";
+  position: absolute;
+  inset: -6px 0;   /* -6 而非 -5：有 1px 邊框的元素，
+                        ::after 的定位基準是 padding box，34px 會只剩 32px+10=42px */
+}
+.btn--xs::after { inset: -7px 0; }
+.iconbtn::after { inset: -3px; }
+.slider__btn::after { inset: -5px -3px; }
+.search__clear::after { content: ""; position: absolute; inset: -6px; }
+
+.switch::after { content: ""; position: absolute; inset: -5px 0; }
+
+/* 輪播圓點：垂直補到 44px。
+   水平只能補到「剛好鋪滿自己那份間距」（6px 圓點 + 6px gap = 12px pitch），
+   否則相鄰圓點的命中區會互疊，導致「點右邊卻選到左邊」的誤觸。
+   選中の長條圓點（16px）不橫向擴張，直接用自己的實際寬度 ——
+   要讓圓點真的 44×44，必須重新設計圓點本身（路線 B），不在路線 A 範圍。 */
+.dots .dot::after { content: ""; position: absolute; inset: -19px -3px; }
+.dots .dot[aria-current="true"]::after { inset: -19px 0; }
+
+/* 唯讀狀態不要攔截點擊 */
+.btn:disabled::after { content: none; }
+
+/* 更新失敗的短暫錯誤態：讓使用者的視線落點（按鈕本身）給出回饋，
+   而不是只有下方 13px 的小字變色。 */
+.btn.is-error {
+  border-color: rgba(180, 45, 45, .55);
+  color: #A82A2A;
+  background: rgba(180, 45, 45, .06);
+}
+[data-theme="dark"] .btn.is-error {
+  border-color: rgba(229, 120, 111, .5);
+  color: #E5786F;
+  background: rgba(229, 120, 111, .08);
 }

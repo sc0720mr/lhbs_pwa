@@ -23,7 +23,7 @@
        3) <meta name="app-version"> 與 <meta name="app-cache-version">
      三者不一致，就代表檔案沒蓋好或快取還在供應舊版。
      --------------------------------------------------------------------- */
-  var BUILD = 'LHBS build 5.2.0 / cache v35';
+  var BUILD = 'LHBS build 6.0.0 / cache v36';
   try {
     console.log('%c' + BUILD, 'background:#08B898;color:#04231C;font-weight:700;padding:3px 8px;border-radius:2px');
   } catch (e) { /* console 不可用時忽略 */ }
@@ -57,16 +57,53 @@
     BOARDING_KEY: 'lhbs_boarding_ack',
     BOARDING_HOURS: 24,
     THEME_KEY: 'lhbs_theme',
-    ALERTS: [
-      {
-        id: '2026-07-easycard',
-        message: '搭乘社巴使用悠遊卡或悠遊付乘車碼，請【上車刷卡一次】即可，到站可直接下車。',
-        startTime: '2026-07-10T00:00:00',
-        endTime: '2026-07-10T23:59:59'
-      }
-    ],
-    TYPHOON_DAYS: ['2024/12/31']
+
+    /* 公告與颱風日的「真實來源」在 data/schedule-config.json。
+       這裡的預設值刻意留空 —— 萬一 fetch 失敗（離線、檔案未部署），
+       寧可什麼都不顯示，也不要顯示過期公告。 */
+    RUNTIME_CONFIG_URL: 'data/schedule-config.json',
+    ALERTS: [],
+    TYPHOON_DAYS: []
   };
+
+  /* ---------------------------------------------------------------------
+     執行期設定（公告 / 颱風日）
+     ---------------------------------------------------------------------
+     原本這兩份資料硬寫在 JS 裡（ALERTS 只有 2026-07-10 一天、
+     TYPHOON_DAYS 停在 2024/12/31），時間一過就整體失效：公告橫幅永遠
+     不出現，颱風班表永遠不會被啟用 —— 而且沒有任何東西提醒維護者。
+     現在改成讀外部 JSON，改公告不用動程式碼。
+
+     日期格式約定：typhoonDays 用 YYYY/MM/DD（與 toLocaleDateString('zh-TW')
+     的輸出一致）；alerts 的 startTime / endTime 用 ISO 8601 本地時間。
+     --------------------------------------------------------------------- */
+  function loadRuntimeConfig() {
+    if (!window.fetch) return Promise.resolve();
+    return fetch(CONFIG.RUNTIME_CONFIG_URL, { cache: 'no-cache' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('config ' + res.status);
+        return res.json();
+      })
+      .then(function (cfg) {
+        if (!cfg) return;
+        if (Array.isArray(cfg.alerts)) CONFIG.ALERTS = cfg.alerts;
+        if (Array.isArray(cfg.typhoonDays)) CONFIG.TYPHOON_DAYS = cfg.typhoonDays;
+
+        /* 唯一會提醒維護者的地方：公告全部過期就出聲。 */
+        if (CONFIG.ALERTS.length) {
+          var now = Date.now();
+          var live = CONFIG.ALERTS.filter(function (a) {
+            return a && a.endTime && now <= new Date(a.endTime).getTime();
+          });
+          if (!live.length) {
+            try { console.warn('[LHBS] 公告設定已全部過期，請更新 ' + CONFIG.RUNTIME_CONFIG_URL); } catch (e) {}
+          }
+        }
+      })
+      .catch(function () {
+        /* 離線或檔案不存在：沿用空陣列，介面會自己隱藏。 */
+      });
+  }
 
   /* ---------------------------------------------------------------------
      小工具
@@ -422,6 +459,29 @@
       }
     }
     if (scrollBtn) scrollBtn.hidden = !(next.index > 2);
+
+    announceNext(row, next.diff, p);
+  }
+
+  /* ---------------------------------------------------------------------
+     螢幕閱讀器公告
+     ---------------------------------------------------------------------
+     原本 aria-live="polite" aria-atomic="true" 掛在整個 Hero 上，而 Hero 内含
+     下班車時間、剩餘分鐘、路線、目的地、後三班 —— init() 每 30 秒呼叫一次
+     refreshScheduleViews()，等於每 30 秒把整段重唸一次，使用者只要停在時刻表
+     頁就週期性被打斷。
+     改成：live region 縮到一個 sr-only 節點，只有「下班車真的換了」才寫入。
+     --------------------------------------------------------------------- */
+  var lastAnnounced = '';
+  function announceNext(row, diff, p) {
+    var host = document.getElementById('heroAnnounce');
+    if (!host) return;
+    var sig = row[0] + '|' + row[1] + '|' + (diff <= 0 ? 'now' : 'soon');
+    if (sig === lastAnnounced) return;
+    lastAnnounced = sig;
+    host.textContent = '下班車 ' + row[0] + '，' + row[1] + '，' +
+      (p.to ? '往' + p.to.replace(/^往/, '') : p.from) + '，' +
+      (diff <= 0 ? '即將發車' : relativeText(diff));
   }
 
   function refreshScheduleViews() {
@@ -790,6 +850,7 @@
         setMode('error');
         setSummary('即時到站暫時無法取得，時刻表與站點清單仍可正常使用。');
         nextAt = Date.now() + CONFIG.POLL_MS;
+        throw new Error('tdx update failed');
       }).then(function (v) { inFlight = false; return v; },
               function (e) { inFlight = false; throw e; });
     }
@@ -821,10 +882,23 @@
     var refreshBtn = document.getElementById('refreshTdx');
     if (refreshBtn) {
       refreshBtn.addEventListener('click', function () {
+        if (refreshBtn.disabled) return;
         refreshBtn.disabled = true;
         refreshBtn.classList.add('is-busy');
-        update(false).then(function () { refreshBtn.disabled = false; refreshBtn.classList.remove('is-busy'); },
-                           function () { refreshBtn.disabled = false; refreshBtn.classList.remove('is-busy'); });
+        refreshBtn.classList.remove('is-error');
+        var settle = function (failed) {
+          refreshBtn.disabled = false;
+          refreshBtn.classList.remove('is-busy');
+          if (failed) {
+            /* 失敗時錯誤訊息原本只寫在下面那行 13px 小字（#syncStatus），
+               但使用者的視線在按鈕上 —— 主觀感受就是「按了、轉了一下、什麼都沒發生」。
+               讓按鈕自己也短暫變色，並把行內提示寫成可重試的句子。 */
+            refreshBtn.classList.add('is-error');
+            setSync('取不到即時資料 · 顯示 ' + (lastGeneratedAt ? fmtTime(lastGeneratedAt) + ' 的快照' : '上次快照') + '，可再按一次重試', true);
+            setTimeout(function () { refreshBtn.classList.remove('is-error'); }, 2400);
+          }
+        };
+        update(false).then(function () { settle(false); }, function () { settle(true); });
       });
     }
 
@@ -928,8 +1002,11 @@
 
       if (dotsWrap) {
         dotsWrap.innerHTML = slides.map(function (_, i) {
-          return '<button class="dot" type="button" role="tab" aria-label="第 ' + (i + 1) + ' 張，共 ' +
-            slides.length + ' 張" aria-selected="' + (i === 0 ? 'true' : 'false') + '"></button>';
+          /* 原本用 role="tab"，但父層是 role="group"、也沒有 tabpanel，
+             屬於語意錯誤（實測 10 個孤兒 tab），輔助技術會回報不存在的 Tab 關係。
+             圓點只是「第 n 張」的跳轉鈕，用 aria-current 就夠。 */
+          return '<button class="dot" type="button" aria-label="第 ' + (i + 1) + ' 張，共 ' +
+            slides.length + ' 張" aria-current="' + (i === 0 ? 'true' : 'false') + '"></button>';
         }).join('');
       }
       var dots = $$('.dot', root);
@@ -947,7 +1024,7 @@
         return Math.max(0, viewport.scrollWidth - viewport.clientWidth);
       }
       function paint() {
-        dots.forEach(function (d, di) { d.setAttribute('aria-selected', di === index ? 'true' : 'false'); });
+        dots.forEach(function (d, di) { d.setAttribute('aria-current', di === index ? 'true' : 'false'); });
         dots.forEach(function (d, di) { d.tabIndex = di === index ? 0 : -1; });
         slides.forEach(function (s, si) { s.setAttribute('aria-hidden', si === index ? 'false' : 'true'); });
       }
@@ -1095,35 +1172,39 @@
      啟動
      --------------------------------------------------------------------- */
   function totalDepartures() {
+    /* normalSchedule 與 typhoonSchedule 是「互斥」的兩套班表：颱風日只用後者。
+       原本把兩者相加，等於把同一批班次算兩次 —— 「關於」頁顯示 456 筆，
+       而時刻表面板寫「共 66 班」，兩個數字差 7 倍，使用者會懷疑資料正確性。
+       現在只算「正常班表」，並把平／假日分開呈現。 */
+    var sched = DATA.normalSchedule || {};
     var n = 0;
-    ['normalSchedule', 'typhoonSchedule'].forEach(function (k) {
-      var sched = DATA[k];
-      if (!sched) return;
-      Object.keys(sched).forEach(function (d) {
-        Object.keys(sched[d]).forEach(function (t) { n += sched[d][t].length; });
-      });
+    Object.keys(sched).forEach(function (d) {
+      Object.keys(sched[d]).forEach(function (t) { n += sched[d][t].length; });
     });
     return n;
+  }
+  /* 平／假日分開的細項，供「關於」頁顯示，避免只給一個無法核對的大數字。 */
+  function departureBreakdown() {
+    var sched = DATA.normalSchedule || {};
+    function count(day) {
+      var t = sched[day] || {};
+      return Object.keys(t).reduce(function (a, k) { return a + t[k].length; }, 0);
+    }
+    return { workday: count('workday'), holiday: count('holiday') };
   }
   function totalStops() {
     return (DATA.sections || []).reduce(function (a, s) { return a + s.stops.length; }, 0);
   }
 
-  function init() {
-    var mDep = document.getElementById('metaDepartures');
-    if (mDep) mDep.textContent = totalDepartures() + ' 筆';
-    var mSec = document.getElementById('metaSections');
-    if (mSec) mSec.textContent = DATA.sections.length + ' 段 / ' + totalStops() + ' 站';
-    var mVer = document.getElementById('metaVersion');
-    if (mVer) mVer.textContent = DATA.version || '—';
-
+  /* ---------------------------------------------------------------------
+     公告 / 颱風日：依賴執行期設定，所以必須等外部 JSON 回來才決定
+     ---------------------------------------------------------------------
+     原本 init() 一開始就 renderAlert()，若改成讀外部檔案，「先 렌더、後載入」
+     會讓使用者在載入完成前看到錯誤狀態（或永遠不更新）。這裡抽成一個
+     applyRuntimeState()，只在設定真的到手（或確定拿不到）後跑一次。
+     --------------------------------------------------------------------- */
+  function applyRuntimeState() {
     renderAlert();
-    renderPhones();
-    applyPhoneSearch();
-    renderHero();
-    renderSchedule(true);
-    buildStops();
-    setOffline(!navigator.onLine);
 
     if (isTyphoonDay()) {
       state.day = 'holiday';
@@ -1133,6 +1214,29 @@
       renderHero();
       renderSchedule(true);
     }
+  }
+
+  function init() {
+    var mDep = document.getElementById('metaDepartures');
+    if (mDep) {
+      var b = departureBreakdown();
+      mDep.textContent = totalDepartures() + ' 筆（平日 ' + b.workday + ' · 假日 ' + b.holiday + '）';
+    }
+    var mSec = document.getElementById('metaSections');
+    if (mSec) mSec.textContent = DATA.sections.length + ' 段 / ' + totalStops() + ' 站';
+    var mVer = document.getElementById('metaVersion');
+    if (mVer) mVer.textContent = DATA.version || '—';
+
+    renderPhones();
+    applyPhoneSearch();
+    renderHero();
+    renderSchedule(true);
+    buildStops();
+    setOffline(!navigator.onLine);
+
+    /* 公告與颱風日要等 data/schedule-config.json 回來；先畫時刻表，
+       不阻塞首屏。拿到設定後再補上橫幅（或確定不顯示）。 */
+    loadRuntimeConfig().then(applyRuntimeState);
 
     var initial = (location.hash || '').replace('#', '');
     if (VIEWS.indexOf(initial) === -1) initial = 'schedule';

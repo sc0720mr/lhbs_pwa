@@ -1,4 +1,4 @@
-/* 水蓮社區巴士 PWA — Service Worker v33 (greenline, GitHub Pages 根目錄版)
+/* 水蓮社區巴士 PWA — Service Worker v36 (greenline, GitHub Pages 根目錄版)
  * --------------------------------------------------------------------------
  * 這個檔案假設自己被放在 repo 根目錄，也就是 https://sc0720mr.github.io/lhbs_pwa/
  * 因此所有路徑都以「相對本站根目錄」撰寫，不使用開頭的 '/'，
@@ -18,13 +18,14 @@
  *     就會出現「檔案已經改了、畫面卻還是舊的」。
  * ------------------------------------------------------------------------ */
 
-const CACHE_VERSION = 'v35';
+const CACHE_VERSION = 'v36';
 const CACHE_NAME = 'lhbs-greenline-' + CACHE_VERSION;
 
 /* 用相對路徑結尾比對，避免 absolute path 在子目錄下失效 */
 const NETWORK_FIRST = [
   'index.html',
   'data/tdx_snapshot.json',
+  'data/schedule-config.json',
   'service-worker.js'
 ];
 
@@ -37,9 +38,12 @@ const APP_ASSETS = [
   './js/data.js',
   './js/core.js',
   './data/tdx_snapshot.json',
+  './data/schedule-config.json',
   './icon/favicon-32x32.png',
   './icon/favicon-128.png',
-  './icon/favicon-196x196.png',
+  './icon/icon-192.png',
+  './icon/icon-512.png',
+  './icon/icon-maskable-512.png',
   './icon/apple-touch-icon-180x180.png'
 ];
 

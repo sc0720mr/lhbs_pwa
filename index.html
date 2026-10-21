@@ -1,6 +1,22 @@
 <!DOCTYPE html>
-<html lang="zh-Hant-TW" data-theme="light">
+<html lang="zh-Hant-TW">
 <head>
+<!-- charset 必須是 <head> 的第一個元素（規範要求前 1024 bytes 內）：
+     原本它排在兩個 gtag <script> 之後，瀏覽器可能已用錯誤編碼開始解析。 -->
+<meta charset="utf-8">
+<!-- 主題必須在任何 CSS 之前決定，否則系統預設深色的使用者每次冷啟動
+     都會先看到一整片淺色再翻黑（FOUC）。這是一段阻塞式 inline script，
+     不依賴 core.js 的 defer 時機。 -->
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem('lhbs_theme');
+      var theme = (saved === 'dark' || saved === 'light') ? saved
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+  })();
+</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-8J0N13G9LJ"></script>
 <script>
@@ -10,22 +26,25 @@
 
   gtag('config', 'G-8J0N13G9LJ');
 </script>
-<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>水蓮車班時刻表</title>
 <meta name="description" content="水蓮山莊社區巴士及 591、F913 公車時刻表、站點資訊與即時到站查詢。">
 <meta name="author" content="Steven Chang">
-<meta name="theme-color" content="#0B0E13">
-<meta name="app-version" content="5.2.0">
-<meta name="app-cache-version" content="v35">
+<!-- theme-color 分亮／暗兩組：單一值必然與另一種主題的外殼不一致，
+     Android 狀態列會出現一道色差色帶。 -->
+<meta name="theme-color" content="#0B0E13" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F6F7F9" media="(prefers-color-scheme: light)">
+<meta name="app-version" content="6.0.0">
+<meta name="app-cache-version" content="v36">
 <meta name="format-detection" content="telephone=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="水蓮車班時刻表">
-<link rel="manifest" href="manifest.json?v=5.2.0">
+<link rel="manifest" href="manifest.json?v=6.0.0">
 <link rel="icon" type="image/png" sizes="32x32" href="icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon/icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon-180x180.png">
-<link rel="stylesheet" href="style.css?v=5.2.0">
+<link rel="stylesheet" href="style.css?v=6.0.0">
 </head>
 <body>
 
@@ -94,7 +113,7 @@
   </div>
 </nav>
 
-<div class="page" id="main">
+<main class="page" id="main">
 
   <div class="notice" id="alertBanner" role="status" hidden>
     <span class="notice__icon" aria-hidden="true"><svg><use href="#i-bell"/></svg></span>
@@ -115,7 +134,7 @@
   <!-- ============================ 時刻表 ============================ -->
   <section class="panel" id="panel-schedule" role="tabpanel" aria-labelledby="tab-schedule" tabindex="-1">
 
-    <div class="hero" aria-live="polite" aria-atomic="true">
+    <div class="hero">
       <div class="hero__body">
         <div class="hero__top">
           <span class="hero__label"><span class="live live--ink" aria-hidden="true"></span>下班車</span>
@@ -131,6 +150,11 @@
         </div>
         <p class="hero__empty" id="heroEmpty" hidden>今天已無後續班次。</p>
         <div class="hero__next" id="heroNext" hidden></div>
+        <!-- live region 只留這一行：只有「下班車真的換了」才寫入。
+             原本 aria-live + aria-atomic 掛在整個 .hero 上，而 init() 每 30 秒
+             呼叫一次 refreshScheduleViews()，等於每 30 秒把時間、剩餘、路線、
+             目的地整段重唸一次。 -->
+        <p class="sr-only" id="heroAnnounce" aria-live="polite" aria-atomic="true"></p>
       </div>
       <div class="hero__perf" aria-hidden="true"></div>
     </div>
@@ -140,14 +164,14 @@
       <aside class="controls" aria-label="時刻表篩選條件">
         <div class="ctrl">
           <span class="ctrl__label" id="lbl-day">日期</span>
-          <div class="seg" role="group" aria-labelledby="lbl-day" id="segDay">
+          <div class="seg" role="group" aria-labelledby="lbl-day" aria-label="日期，二選一" id="segDay">
             <button type="button" data-day="workday" aria-pressed="true">平日</button>
             <button type="button" data-day="holiday" aria-pressed="false">假日</button>
           </div>
         </div>
         <div class="ctrl">
           <span class="ctrl__label" id="lbl-dir">方向</span>
-          <div class="seg" role="group" aria-labelledby="lbl-dir" id="segDir">
+          <div class="seg" role="group" aria-labelledby="lbl-dir" aria-label="方向，二選一" id="segDir">
             <button type="button" data-dir="to" aria-pressed="true">去程</button>
             <button type="button" data-dir="from" aria-pressed="false">回程</button>
           </div>
@@ -186,12 +210,12 @@
           <span class="empty__icon" aria-hidden="true"><svg><use href="#i-clock"/></svg></span>
           <p class="empty__title">沒有符合條件的班次</p>
           <p class="empty__desc">試著切換「假日」、改用其他路線篩選，或關閉「只看接下來」。</p>
-          <button class="btn btn--quiet btn--sm" type="button" id="resetScheduleBtn">重設篩選條件</button>
+          <button class="btn btn--quiet btn--sm" type="button" id="resetScheduleBtn">重置篩選條件</button>
         </div>
       </div>
     </div>
 
-    <div class="sheet prose" id="designNote">
+    <div class="sheet prose" id="designNote-schedule">
       <h3>【免責聲明】</h3>
       <p>本網頁之公車與社巴動態資訊係串接「交通部 TDX 運具資料交換平台」之開放資料。因受車機訊號、網路傳輸或官方資料源更新頻率影響，實際到站時間可能與現場略有落差。本網站不對因 API 延遲或中斷所造成的行程延誤承擔責任。</p>
     </div>
@@ -240,7 +264,7 @@
       <button class="btn btn--quiet btn--sm" type="button" id="clearStopSearch">清除搜尋</button>
     </div>
 
-    <div class="sheet prose" id="designNote">
+    <div class="sheet prose" id="designNote-stops">
       <h3>【免責聲明】</h3>
       <p>本網頁之公車與社巴動態資訊係串接「交通部 TDX 運具資料交換平台」之開放資料。因受車機訊號、網路傳輸或官方資料源更新頻率影響，實際到站時間可能與現場略有落差。本網站不對因 API 延遲或中斷所造成的行程延誤承擔責任。</p>
     </div>
@@ -274,7 +298,7 @@
       <button class="btn btn--quiet btn--sm" type="button" id="clearPhoneSearch">清除搜尋</button>
     </div>
 
-    <div class="sheet prose" id="designNote">
+    <div class="sheet prose" id="designNote-phone">
       <h3>【免責聲明】</h3>
       <p>本網頁之公車與社巴動態資訊係串接「交通部 TDX 運具資料交換平台」之開放資料。因受車機訊號、網路傳輸或官方資料源更新頻率影響，實際到站時間可能與現場略有落差。本網站不對因 API 延遲或中斷所造成的行程延誤承擔責任。</p>
     </div>
@@ -316,10 +340,10 @@
       <div class="slider" id="iosSlider" data-slider="ios">
         <div class="slider__frame">
           <div class="slider__track" id="iosViewport">
-            <div class="slide"><img src="images/ios_step1.png?v=5.2.0" alt="iPhone 安裝步驟 1：以 Safari 開啟時刻表" width="720" height="1419" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/ios_step2.png?v=5.2.0" alt="iPhone 安裝步驟 2：點選底部分享按鈕" width="720" height="1419" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/ios_step3.png?v=5.2.0" alt="iPhone 安裝步驟 3：選擇加入主畫面" width="720" height="1419" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/ios_step4.png?v=5.2.0" alt="iPhone 安裝步驟 4：命名後新增" width="720" height="1419" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/ios_step1.webp?v=6.0.0" alt="iPhone 安裝步驟 1：以 Safari 開啟時刻表" width="480" height="1419" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/ios_step2.webp?v=6.0.0" alt="iPhone 安裝步驟 2：點選底部分享按鈕" width="480" height="1419" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/ios_step3.webp?v=6.0.0" alt="iPhone 安裝步驟 3：選擇加入主畫面" width="480" height="1419" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/ios_step4.webp?v=6.0.0" alt="iPhone 安裝步驟 4：命名後新增" width="480" height="1419" decoding="async" draggable="false"></div>
           </div>
         </div>
         <div class="slider__nav">
@@ -338,12 +362,12 @@
       <div class="slider" id="androidSlider" data-slider="android">
         <div class="slider__frame">
           <div class="slider__track" id="androidViewport">
-            <div class="slide"><img src="images/android_step1.png?v=5.2.0" alt="Android 安裝步驟 1：以 Chrome 開啟時刻表" width="720" height="1521" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/android_step2.png?v=5.2.0" alt="Android 安裝步驟 2：開啟右上角更多選單" width="720" height="1521" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/android_step3.png?v=5.2.0" alt="Android 安裝步驟 3：選擇安裝應用程式" width="720" height="1521" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/android_step4.png?v=5.2.0" alt="Android 安裝步驟 4：確認安裝" width="720" height="1521" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/android_step5.png?v=5.2.0" alt="Android 安裝步驟 5：桌面上出現捷徑" width="720" height="1521" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/android_step6.png?v=5.2.0" alt="Android 安裝步驟 6：點選捷徑開啟" width="720" height="1521" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step1.webp?v=6.0.0" alt="Android 安裝步驟 1：以 Chrome 開啟時刻表" width="480" height="1014" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step2.webp?v=6.0.0" alt="Android 安裝步驟 2：開啟右上角更多選單" width="480" height="1014" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step3.webp?v=6.0.0" alt="Android 安裝步驟 3：選擇安裝應用程式" width="480" height="1014" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step4.webp?v=6.0.0" alt="Android 安裝步驟 4：確認安裝" width="480" height="1014" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step5.webp?v=6.0.0" alt="Android 安裝步驟 5：桌面上出現捷徑" width="480" height="1014" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step6.webp?v=6.0.0" alt="Android 安裝步驟 6：點選捷徑開啟" width="480" height="1014" decoding="async" draggable="false"></div>
           </div>
         </div>
         <div class="slider__nav">
@@ -354,7 +378,7 @@
       </div>
     </div>
 
-    <div class="sheet prose" id="designNote">
+    <div class="sheet prose" id="designNote-about">
       <h3>【免責聲明】</h3>
       <p>本網頁之公車與社巴動態資訊係串接「交通部 TDX 運具資料交換平台」之開放資料。因受車機訊號、網路傳輸或官方資料源更新頻率影響，實際到站時間可能與現場略有落差。本網站不對因 API 延遲或中斷所造成的行程延誤承擔責任。</p>
     </div>
@@ -362,7 +386,7 @@
     <p class="sitefoot">Ver. 114.02.04 · Build 2024.11.05 · 介面重構 v4.0.0（Nightline）<br>Copyright © 2024 Steven Chang. All rights reserved.</p>
   </section>
 
-</div>
+</main>
 
 <div class="modal" id="boardingModal" role="dialog" aria-modal="true" aria-labelledby="boardingTitle" aria-describedby="boardingBody" hidden>
   <div class="modal__card">
@@ -375,8 +399,8 @@
   </div>
 </div>
 
-<script src="js/data.js?v=5.2.0" defer></script>
-<script src="js/core.js?v=5.2.0" defer></script>
+<script src="js/data.js?v=6.0.0" defer></script>
+<script src="js/core.js?v=6.0.0" defer></script>
 <script>
 if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
   window.addEventListener('load', function () {

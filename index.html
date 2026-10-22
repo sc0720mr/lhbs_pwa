@@ -378,6 +378,30 @@
       </div>
     </div>
 
+    <!-- ======================= 贊助（請開發者喝杯咖啡） ======================= -->
+         <div class="sheet sponsor" id="sponsor">
+          <div class="sponsor__head">
+            <span class="sponsor__icon" aria-hidden="true"><svg><use href="#i-coffee"/></svg></span>
+            <div class="sponsor__headtext">
+              <h3 class="sponsor__title" id="sponsorTitle">請開發者喝杯咖啡</h3>
+              <p class="sponsor__desc">這個時刻表是免費維護的。如果它幫到你，歡迎小額贊助，讓它能繼續更新。</p>
+            </div>
+          </div>
+    
+          <button class="btn btn--quiet sponsor__toggle" type="button" id="sponsorToggle"
+                  aria-expanded="false" aria-controls="sponsorQR">
+            <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            <span id="sponsorToggleLabel">顯示贊助資訊</span>
+          </button>
+    
+          <!-- 收合時 hidden；JS 會同步 aria-expanded 與 hidden，兩者不可脫鉤 -->
+          <div class="sponsor__qr" id="sponsorQR" role="region" aria-labelledby="sponsorTitle" hidden>
+            <h3 class="sponsor__title">LINE Bank</h3>
+            <p class="sponsor__desc">帳戶：824 連線商業銀行（總行 6880）</p>
+            <p class="sponsor__desc">帳號：111018165754</p>
+          </div>
+        </div>
+
     <div class="sheet prose" id="designNote-about">
       <h3>【免責聲明】</h3>
       <p>本網頁之公車與社巴動態資訊係串接「交通部 TDX 運具資料交換平台」之開放資料。因受車機訊號、網路傳輸或官方資料源更新頻率影響，實際到站時間可能與現場略有落差。本網站不對因 API 延遲或中斷所造成的行程延誤承擔責任。</p>

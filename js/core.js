@@ -23,7 +23,7 @@
        3) <meta name="app-version"> 與 <meta name="app-cache-version">
      三者不一致，就代表檔案沒蓋好或快取還在供應舊版。
      --------------------------------------------------------------------- */
-  var BUILD = 'LHBS build 6.0.0 / cache v36';
+  var BUILD = 'LHBS build 6.1.0 / cache v37';
   try {
     console.log('%c' + BUILD, 'background:#08B898;color:#04231C;font-weight:700;padding:3px 8px;border-radius:2px');
   } catch (e) { /* console 不可用時忽略 */ }
@@ -1167,6 +1167,34 @@
     });
   }
   window.addEventListener('appinstalled', function () { if (installBtn) installBtn.hidden = true; });
+
+  /* ---------------------------------------------------------------------
+     贊助區塊（請開發者喝杯咖啡）
+     ---------------------------------------------------------------------
+     用原生 <button> 做展開鈕，所以 Enter / Space 由瀏覽器處理，不需要自己攔鍵盤。
+     唯一的紀律：aria-expanded 與 hidden 必須永遠同步 —— 兩者脫鉤時，
+     螢幕閱讀器會唸「已展開」但畫面上什麼都沒有。
+     --------------------------------------------------------------------- */
+  var sponsorToggle = document.getElementById('sponsorToggle');
+  var sponsorQR = document.getElementById('sponsorQR');
+  var sponsorToggleLabel = document.getElementById('sponsorToggleLabel');
+
+  if (sponsorToggle && sponsorQR) {
+    var setSponsor = function (open) {
+      sponsorToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      sponsorQR.hidden = !open;
+      if (sponsorToggleLabel) {
+        sponsorToggleLabel.textContent = open ? '收合贊助資訊' : '顯示贊助資訊';
+      }
+    };
+
+    sponsorToggle.addEventListener('click', function () {
+      setSponsor(sponsorToggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    /* 從外面切回「關於」頁時，收合狀態保持一致（.panel 只切 hidden，不會動內部） */
+    setSponsor(false);
+  }
 
   /* ---------------------------------------------------------------------
      啟動

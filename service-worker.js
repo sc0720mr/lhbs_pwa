@@ -1,4 +1,4 @@
-/* 水蓮社區巴士 PWA — Service Worker v36 (greenline, GitHub Pages 根目錄版)
+/* 水蓮社區巴士 PWA — Service Worker v37 (greenline, GitHub Pages 根目錄版)
  * --------------------------------------------------------------------------
  * 這個檔案假設自己被放在 repo 根目錄，也就是 https://sc0720mr.github.io/lhbs_pwa/
  * 因此所有路徑都以「相對本站根目錄」撰寫，不使用開頭的 '/'，
@@ -18,7 +18,7 @@
  *     就會出現「檔案已經改了、畫面卻還是舊的」。
  * ------------------------------------------------------------------------ */
 
-const CACHE_VERSION = 'v36';
+const CACHE_VERSION = 'v37';
 const CACHE_NAME = 'lhbs-greenline-' + CACHE_VERSION;
 
 /* 用相對路徑結尾比對，避免 absolute path 在子目錄下失效 */
@@ -44,7 +44,10 @@ const APP_ASSETS = [
   './icon/icon-192.png',
   './icon/icon-512.png',
   './icon/icon-maskable-512.png',
-  './icon/apple-touch-icon-180x180.png'
+  './icon/apple-touch-icon-180x180.png',
+  /* 贊助 QR Code：離線也要看得到，所以加入預快取。
+     換成自己的 QR 圖時，只要檔名路徑不變，这里就不用動。
+  './images/linepay_qr.webp' */
 ];
 
 self.addEventListener('install', event => {

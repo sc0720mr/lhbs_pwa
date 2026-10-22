@@ -5,18 +5,6 @@
 
   "_typhoonDays_format": "typhoonDays 是日期字串陣列，格式固定 YYYY/MM/DD（必須與瀏覽器 toLocaleDateString('zh-TW') 的輸出格式一致，不能寫成 2026-11-01）。列在此處的日期會自動切換為颱風班表、把日期切到「假日」，並顯示颱風日公告。",
 
-  "_example": {
-    "alerts": [
-      {
-        "id": "2026-11-easycard",
-        "message": "搭乘社巴使用悠遊卡或悠遊付乘車碼，請【上車刷卡一次】即可，到站可直接下車。",
-        "startTime": "2026-11-01T00:00:00",
-        "endTime": "2026-11-30T23:59:59"
-      }
-    ],
-    "typhoonDays": ["2026/07/11"]
-  },
-
   "alerts": [
     {
       "id": "2026-10-easycard-v3",

@@ -18,7 +18,7 @@
  *     就會出現「檔案已經改了、畫面卻還是舊的」。
  * ------------------------------------------------------------------------ */
 
-const CACHE_VERSION = 'v37';
+const CACHE_VERSION = 'v39';
 const CACHE_NAME = 'lhbs-greenline-' + CACHE_VERSION;
 
 /* 用相對路徑結尾比對，避免 absolute path 在子目錄下失效 */

@@ -71,6 +71,13 @@
   --btn-primary-bg: var(--ink);
   --btn-primary-bg-hover: #232935;   /* 亮色：比 --ink 亮一階，白字 14.6:1 */
 
+  /* --- 停駛（颱風日班表） ---------------------------------------------------
+     實測對比：亮色 #B3261E 對 card #FFFFFF = 6.54:1；暗色 #FF9A90 對 card #151A21 = 8.55:1。
+     兩者皆遠高於 AA 4.5:1 —— 這是「今天車沒開」的告警訊息，不能只靠濃淡區分。 */
+  --stop-ink: #B3261E;
+  --stop-bg: #FDECEA;
+  --stop-line: #F3C9C4;
+
   /* --- 字體 --- */
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC",
           "Microsoft JhengHei", Roboto, "Helvetica Neue", sans-serif;
@@ -101,6 +108,9 @@
   --route-r591: #6BA0E0;
   --route-f913: #D0A05C;
   --route-all: #9BA5B3;
+  --stop-ink: #FF9A90;          /* 對 card #151A21 = 8.55:1 */
+  --stop-bg: #2A1715;
+  --stop-line: #4A2420;
   --shadow-modal: 0 16px 48px rgba(0, 0, 0, .6);
   --btn-primary-bg-hover: #DCE2EB;   /* 暗色：比 --ink 暗一階，深字 13.5:1 */
 }
@@ -746,6 +756,44 @@ img { max-width: 100%; display: block; }
 .dep.is-past .dep__route { color: var(--ink-3); }
 .dep.is-past .dep__rel { color: var(--ink-3); }
 .dep.is-past:hover { background: var(--line-soft); }
+
+/* ==========================================================================
+   停駛列（颱風日班表）
+   --------------------------------------------------------------------------
+   「停駛」原本被寫進 .dep__dest（目的地欄），而那一欄在 <520px 是 display:none
+   —— 手機上 DOM 有 36 筆停駛、畫面上一個字都看不到，看起來就是「時刻表沒切換」。
+   現在改由 .dep__rel（剩餘欄，每個斷點都存在）承載，並在這裡給它獨立語意：
+     1. 整列淡色底 —— 一眼可跳過，不必逐列讀文字。
+     2. 時刻與路線不降到「弱對比」，因為「哪一班被取消」本身就是資訊。
+     3. 停駛字樣用實色，不用半透明 —— 它比任何一列都需要被看見。
+   ========================================================================== */
+.dep.is-susp { background: var(--stop-bg); }
+.dep.is-susp:hover { background: var(--stop-bg); }
+.dep.is-susp .dep__time { color: var(--stop-ink); }
+.dep.is-susp .dep__time .cc { color: var(--stop-ink); opacity: .55; }
+.dep.is-susp .dep__route { color: var(--ink-2); }
+.dep.is-susp .dep__rel--susp { color: var(--stop-ink); }
+/* 停駛的時刻劃線：讀作「這個時間不存在」，而不是「這個時間的快照」 */
+.dep.is-susp .dep__time .hh,
+.dep.is-susp .dep__time .mm {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0;
+  opacity: .75;
+}
+.dep__state {
+  display: inline-flex; align-items: center;
+  height: 22px; padding: 0 7px;
+  border: 1px solid var(--stop-line);
+  border-radius: var(--r-1);
+  background: var(--card);
+  font-size: 13px; font-weight: 750;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dep.is-susp .dep__time .hh, .dep.is-susp .dep__time .mm { text-decoration: none; opacity: 1; }
+}
 
 /* 下一班：只加一條 3px 綠色左緣，不填底色 */
 .dep.is-next {

@@ -23,7 +23,7 @@
        3) <meta name="app-version"> 與 <meta name="app-cache-version">
      三者不一致，就代表檔案沒蓋好或快取還在供應舊版。
      --------------------------------------------------------------------- */
-  var BUILD = 'LHBS build 6.1.0 / cache v37';
+  var BUILD = 'LHBS build 6.3.0 / cache v39';
   try {
     console.log('%c' + BUILD, 'background:#08B898;color:#04231C;font-weight:700;padding:3px 8px;border-radius:2px');
   } catch (e) { /* console 不可用時忽略 */ }
@@ -86,8 +86,28 @@
       })
       .then(function (cfg) {
         if (!cfg) return;
-        if (Array.isArray(cfg.alerts)) CONFIG.ALERTS = cfg.alerts;
-        if (Array.isArray(cfg.typhoonDays)) CONFIG.TYPHOON_DAYS = cfg.typhoonDays;
+
+        /* alerts 允許單一物件，typhoonDays 允許單一字串 —— 少寫一層括號不該讓整份設定失效。 */
+        CONFIG.ALERTS = toArray(cfg.alerts);
+        CONFIG.TYPHOON_DAYS = toArray(cfg.typhoonDays);
+
+        /* 建索引時順便回報無法解析的日期，讓「靜默失效」變成有聲音的警告。 */
+        var badDates = rebuildTyphoonIndex();
+        if (badDates.length) {
+          warn('颱風日清單有 ' + badDates.length + ' 筆無法解析，已忽略：' + JSON.stringify(badDates) +
+               '　可接受的寫法：2026/10/22、2026/10/2、2026-10-22');
+        }
+
+        /* 最常見的失手：把日期改進 _example（範例）區塊，而真正的頂層陣列還是空的。
+           這種情況畫面完全正常、主控台也全綠，維護者只會覺得「網站壞了」。 */
+        if (!CONFIG.TYPHOON_DAYS.length && cfg._example && toArray(cfg._example.typhoonDays).length) {
+          warn('偵測到 typhoonDays 只寫在 _example（範例）區塊裡，那不會生效。' +
+               '請改檔案最下方的頂層 "typhoonDays": [...]');
+        }
+        if (!CONFIG.ALERTS.length && cfg._example && toArray(cfg._example.alerts).length) {
+          warn('偵測到 alerts 只寫在 _example（範例）區塊裡，那不會生效。' +
+               '請改檔案最下方的頂層 "alerts": [...]');
+        }
 
         /* 唯一會提醒維護者的地方：公告全部過期就出聲。 */
         if (CONFIG.ALERTS.length) {
@@ -96,12 +116,27 @@
             return a && a.endTime && now <= new Date(a.endTime).getTime();
           });
           if (!live.length) {
-            try { console.warn('[LHBS] 公告設定已全部過期，請更新 ' + CONFIG.RUNTIME_CONFIG_URL); } catch (e) {}
+            warn('公告設定已全部過期，請更新 ' + CONFIG.RUNTIME_CONFIG_URL);
           }
         }
+
+        /* 開發者自己看得到的一面：把「今天是什麼日期、命中哪些颱風日」印出來。
+           維護者回報「設了沒生效」時，這一行就能直接分辨是日期算錯還是字串沒對上。 */
+        if (CONFIG.TYPHOON_DAYS.length) {
+          try {
+            console.info('[LHBS] 今天是 ' + taipeiTodayKey() + '／颱風日清單索引 ' +
+                         JSON.stringify(Object.keys(TYPHOON_SET)) +
+                         '／判定：' + (isTyphoonDay() ? '颱風日班表' : '正常班表'));
+          } catch (e) {}
+        }
       })
-      .catch(function () {
-        /* 離線或檔案不存在：沿用空陣列，介面會自己隱藏。 */
+      .catch(function (err) {
+        /* 離線或檔案不存在：沿用空陣列，介面會自己隱藏。
+           但一定要出聲 —— 404 或 JSON 語法錯誤原本是完全靜默的，
+           維護者只會看到「公告不出現、颱風班表沒切」，卻沒有任何線索。 */
+        rebuildTyphoonIndex();
+        warn('讀不到 ' + CONFIG.RUNTIME_CONFIG_URL + '（' + (err && err.message ? err.message : '未知錯誤') +
+             '）。公告與颱風日都不會生效，請確認檔案存在且 JSON 格式正確。');
       });
   }
 
@@ -127,6 +162,18 @@
     if (parts.length < 2) return { from: String(dest), to: '' };
     return { from: parts[0], to: parts.slice(1).join(' ') };
   }
+  /* ----------------------------------------------------------------
+     「停駛」不是地名。
+     data.js 的 typhoonSchedule 把它放在「目的地」欄位（第三欄）：
+         ["06:25", "F913", "停駛"]
+     原本程式把整串當目的地渲染成 <span class="dep__dest">…停駛…</span>，
+     而 .dep__dest 在手機版是 display:none（style.css 的 RESPONSIVE 區塊）——
+     於是手機上 DOM 有 36 筆「停駛」、畫面上一個字都看不到，
+     使用者只看到「06:25 F913 已發車」，完全不知道那班根本不開。
+     現在把它抽成獨立的狀態語意，不再依賴被隱藏的目的地欄位。
+     ---------------------------------------------------------------- */
+  var SUSPEND_RE = /^\s*停駛\s*$/;
+  function isSuspended(dest) { return SUSPEND_RE.test(String(dest)); }
   function routeKey(name) {
     if (String(name).indexOf('F913') === 0) return 'f913';
     if (name === '591') return 'r591';
@@ -165,11 +212,82 @@
   /* ---------------------------------------------------------------------
      日期 / 班表
      --------------------------------------------------------------------- */
-  function taipeiDateString() {
-    try { return new Date().toLocaleDateString('zh-TW', { timeZone: 'Asia/Taipei' }); }
-    catch (e) { return new Date().toLocaleDateString(); }
+  /* 維護者可能寫 2026/10/22、2026/10/2、2026-10-22、2026.10.22、全形數字、
+     甚至 2026年10月22日。這些全部收斂成同一個 key：Y/M/D（不補零），
+     正好等於 toLocaleDateString('zh-TW') 的輸出。
+     原本是拿原始字串直接 indexOf 比對，寫法差一個字元就永遠不會命中，
+     而且沒有任何錯誤訊息 —— 那正是「設定了卻沒生效」的溫床。 */
+  function normalizeDateKey(v) {
+    if (v === null || v === undefined) return '';
+    var s = String(v).trim();
+    if (!s) return '';
+    s = s.replace(/[\uFF10-\uFF19]/g, function (c) {            /* 全形數字 */
+          return String.fromCharCode(c.charCodeAt(0) - 0xFEE0);
+        })
+        .replace(/[\uFF0F\u2571\u2044]/g, '/')                    /* 全形斜線、分數斜線 */
+        .replace(/[\uFF0D\u2010\u2011\u2012\u2013\u2014\u2015\u2212]/g, '-')  /* 各種破折號當減號 */
+        .replace(/[\u3002\uFF0E\u2027\u00B7]/g, '.')              /* 句號、全形句點當小數點 */
+        .replace(/\u5E74/g, '/').replace(/\u6708/g, '/').replace(/\u65E5/g, '')  /* 2026年10月22日 */
+        .replace(/\s+/g, '');
+
+    var m = s.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/);
+    if (!m) {
+      var c = s.replace(/\D/g, '');
+      if (c.length === 8) m = [null, c.slice(0, 4), c.slice(4, 6), c.slice(6, 8)];  /* 20261022 */
+      else return '';
+    }
+    var y = +m[1], mo = +m[2], d = +m[3];
+    if (!(y >= 1900 && y <= 2999 && mo >= 1 && mo <= 12 && d >= 1 && d <= 31)) return '';
+
+    /* 擋掉 2026/2/30 這種「格式對、日期不存在」的輸入 */
+    var probe = new Date(Date.UTC(y, mo - 1, d));
+    if (probe.getUTCFullYear() !== y || probe.getUTCMonth() !== mo - 1 || probe.getUTCDate() !== d) return '';
+
+    return y + '/' + mo + '/' + d;
   }
-  function isTyphoonDay() { return CONFIG.TYPHOON_DAYS.indexOf(taipeiDateString()) !== -1; }
+
+  /* 台北的「今天」。用 en-CA 的 YYYY-MM-DD 再正規化，不依賴 zh-TW 的輸出格式 ——
+     這樣即使瀏覽器改了在地化格式（例如某天變成 2026年10月22日），判定也不會跟著壞。 */
+  function taipeiTodayKey() {
+    var d = new Date();
+    try {
+      var parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit'
+      }).format(d);
+      var k = normalizeDateKey(parts);
+      if (k) return k;
+    } catch (e) {}
+    try { return normalizeDateKey(d.toLocaleDateString('zh-TW', { timeZone: 'Asia/Taipei' })); }
+    catch (e) { return normalizeDateKey(d.toLocaleDateString()); }
+  }
+
+  /* 保留下這個名字：其他版本／外部呼叫可能還在用。 */
+  function taipeiDateString() { return taipeiTodayKey(); }
+
+  var TYPHOON_SET = {};
+  function rebuildTyphoonIndex() {
+    TYPHOON_SET = {};
+    var bad = [];
+    toArray(CONFIG.TYPHOON_DAYS).forEach(function (raw) {
+      var v = raw;
+      /* 也接受 [{ "date": "2026/10/22" }] 這種寫法，避免多一層物件就整份失效 */
+      if (v && typeof v === 'object') v = v.date !== undefined ? v.date : (v.day !== undefined ? v.day : v.value);
+      var k = normalizeDateKey(v);
+      if (!k) { bad.push(raw); return; }
+      TYPHOON_SET[k] = true;
+    });
+    return bad;
+  }
+  function toArray(v) {
+    if (Array.isArray(v)) return v;
+    if (v === null || v === undefined || v === '') return [];
+    return [v];
+  }
+  function warn(msg) {
+    try { console.warn('[LHBS] ' + msg); } catch (e) {}
+  }
+
+  function isTyphoonDay() { return !!TYPHOON_SET[taipeiTodayKey()]; }
   function activeSchedule() { return isTyphoonDay() ? DATA.typhoonSchedule : DATA.normalSchedule; }
 
   /* ---------------------------------------------------------------------
@@ -330,9 +448,26 @@
     var rows = filteredRows();
     var now = nowMin();
     for (var i = 0; i < rows.length; i++) {
+      /* 停駛班次不是「下一班」。原本這裡會回傳停駛那一列，首頁於是顯示
+         「16:45 預計發車／3 分後」，而那一班根本不開 —— 比看不到停駛更糟，
+         因為它讓使用者據此出門。跳過，只找真正會開的班次。 */
+      if (isSuspended(rows[i][2])) continue;
       if (toMin(rows[i][0]) >= now) return { row: rows[i], diff: toMin(rows[i][0]) - now, index: i };
     }
     return null;
+  }
+  /* 接下來 n 班（只算會開的），供首頁「後三班」使用 */
+  function followingRunning(rows, fromIndex, n) {
+    var out = [];
+    for (var i = fromIndex + 1; i < rows.length && out.length < n; i++) {
+      if (!isSuspended(rows[i][2])) out.push(rows[i]);
+    }
+    return out;
+  }
+  function countSuspended(rows) {
+    var n = 0;
+    for (var i = 0; i < rows.length; i++) if (isSuspended(rows[i][2])) n++;
+    return n;
   }
 
   function renderSchedule(force) {
@@ -343,14 +478,21 @@
 
     var rows = filteredRows();
     var now = nowMin();
-    var upcoming = rows.filter(function (r) { return toMin(r[0]) >= now; });
+    /* 「接下來」只算真的會開的班次：停駛的時刻照樣會到，但它不是「下一班」。
+       原本 upcoming 含停駛，於是 nextMin 可能落在停駛那一列，
+       is-next 會把「停駛」標成下一班 —— 兩個錯誤疊在一起。 */
+    var upcoming = rows.filter(function (r) { return !isSuspended(r[2]) && toMin(r[0]) >= now; });
     var display = state.upcomingOnly ? upcoming : rows;
     var nextMin = upcoming.length ? toMin(upcoming[0][0]) : -1;
+    var suspCount = countSuspended(rows);
 
     if (countEl) {
-      countEl.textContent = state.upcomingOnly
+      var baseCount = state.upcomingOnly
         ? '剩 ' + display.length + ' / 共 ' + rows.length + ' 班'
         : '共 ' + rows.length + ' 班';
+      /* 44 班裡有 36 班停駛卻只寫「共 44 班」，等於告訴使用者今天車很多。
+         把停駛數直接寫進這一行 —— 這是他掃一眼就會看到的數字。 */
+      countEl.textContent = suspCount ? baseCount + ' · ' + suspCount + ' 班停駛' : baseCount;
     }
 
     /* 只有「畫面上真的會變」時才重建 DOM：避免每 30 秒整份 innerHTML 重繪造成
@@ -362,7 +504,19 @@
     if (!display.length) {
       list.innerHTML = '';
       list.hidden = true;
-      if (emptyEl) emptyEl.hidden = false;
+      if (emptyEl) {
+        /* 颱風日「只看接下來」若剩下的全是停駛，原本會顯示
+           「沒有符合條件的班次／試著切換假日」—— 使用者會以為是自己篩選錯，
+           而不是「今天真的沒車了」。 */
+        var noMoreRunning = rows.length > 0 && upcoming.length === 0;
+        var et = emptyEl.querySelector('.empty__title');
+        var ed = emptyEl.querySelector('.empty__desc');
+        if (et) et.textContent = noMoreRunning ? '今日班次已全部停駛' : '沒有符合條件的班次';
+        if (ed) ed.textContent = noMoreRunning
+          ? '颱風日班表：接下來已無行駛班次，請留意社區公告或改搭其他運輸工具。'
+          : '試著切換「假日」、改用其他路線篩選，或關閉「只看接下來」。';
+        emptyEl.hidden = false;
+      }
       return;
     }
     list.hidden = false;
@@ -378,15 +532,18 @@
       var hour = t.slice(0, 2);
       var hourStart = hour !== prevHour;
       prevHour = hour;
-      var p = destParts(dest);
+      var susp = isSuspended(dest);
+      var p = susp ? { from: '', to: '' } : destParts(dest);
       /* 同一方向下「水蓮」幾乎每列都一樣。重複 66 次是純粹的視覺噪音，
          只會在它真的改變時才顯示 —— 列一密集也不會丢掉資訊。 */
-      var showFrom = !p.to || p.from !== prevFrom;
-      prevFrom = p.from;
+      var showFrom = susp ? true : (!p.to || p.from !== prevFrom);
+      if (!susp) prevFrom = p.from;
       var rel = rowRelText(m - now, isPast);
       var spokenRel = isPast ? '已發車' : relativeText(m - now);
-      var cls = 'dep' + (isNext ? ' is-next' : '') + (isPast ? ' is-past' : '') + (hourStart ? ' is-hour-start' : '');
-      var spoken = t + '，' + route + '，' + p.from + (p.to ? '往' + p.to.replace(/^往/, '') : '') + '，' + spokenRel;
+      var cls = 'dep' + (susp ? ' is-susp' : '') + (isNext ? ' is-next' : '') +
+        (isPast ? ' is-past' : '') + (hourStart ? ' is-hour-start' : '');
+      var spoken = t + '，' + route + '，' +
+        (susp ? '停駛' : p.from + (p.to ? '往' + p.to.replace(/^往/, '') : '') + '，' + spokenRel);
 
       return '<div class="' + cls + '" role="listitem" data-route="' + routeKey(route) + '" data-hour="' + hour + '">' +
         '<span class="sr-only">' + escapeHtml(spoken) + '</span>' +
@@ -395,10 +552,16 @@
           '<span class="cc">:</span><span class="mm">' + t.slice(3, 5) + '</span></span>' +
         '<span class="dep__route" aria-hidden="true">' + escapeHtml(route) + '</span>' +
         '<span class="dep__dest' + (showFrom ? '' : ' dep__dest--cont') + '" aria-hidden="true">' +
-          (showFrom ? '<span class="dep__from">' + escapeHtml(p.from) + '</span>' : '') +
-          (p.to ? '<span class="dep__sep">→</span><span class="dep__to">' + escapeHtml(p.to) + '</span>' : '') +
+          (susp ? '' :
+            (showFrom ? '<span class="dep__from">' + escapeHtml(p.from) + '</span>' : '') +
+            (p.to ? '<span class="dep__sep">→</span><span class="dep__to">' + escapeHtml(p.to) + '</span>' : '')) +
         '</span>' +
-        '<span class="dep__rel" aria-hidden="true">' + escapeHtml(rel) + '</span>' +
+        /* 停駛用「剩餘」欄承載：那一欄在每一個斷點都存在（手機在 grid 第 3 欄），
+           而「剩餘 3 分」對一班不開的車本來就沒有意義。
+           這樣不必新增 grid 欄位、不必動任何版面骨架，手機與桌機都看得到。 */
+        '<span class="dep__rel' + (susp ? ' dep__rel--susp' : '') + '" aria-hidden="true">' +
+          (susp ? '<span class="dep__state">停駛</span>' : escapeHtml(rel)) +
+        '</span>' +
       '</div>';
     }).join('');
 
@@ -447,7 +610,9 @@
     if (badgeEl) { badgeEl.textContent = row[1]; badgeEl.setAttribute('data-route', routeKey(row[1])); }
     if (destEl) destEl.textContent = p.to ? p.from + ' → ' + p.to : p.from;
 
-    var following = rows.slice(next.index + 1, next.index + 4);
+    /* 「後三班」也只列會開的：列一班停駛的「06:50」在標題寫著「預計發車」的卡片上，
+       等於叫使用者去等一班不會來的車。 */
+    var following = followingRunning(rows, next.index, 3);
     if (nextEl) {
       if (!following.length) { nextEl.hidden = true; }
       else {

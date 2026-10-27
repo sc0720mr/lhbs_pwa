@@ -315,6 +315,30 @@
       <p class="phead__desc">熱心住戶自主維護，內容參考管理委員會公布之社巴時刻表。</p>
     </div>
 
+    <!-- ======================= 贊助（請開發者喝杯咖啡） ======================= -->
+    <div class="sheet sponsor" id="sponsor">
+      <div class="sponsor__head">
+        <span class="sponsor__icon" aria-hidden="true"><svg><use href="#i-coffee"/></svg></span>
+        <div class="sponsor__headtext">
+          <h3 class="sponsor__title" id="sponsorTitle">請開發者喝杯咖啡</h3>
+          <p class="sponsor__desc">這個時刻表是免費維護的。如果它幫到你，歡迎小額贊助，讓它能繼續更新。</p>
+        </div>
+      </div>
+
+      <button class="btn btn--quiet sponsor__toggle" type="button" id="sponsorToggle"
+              aria-expanded="false" aria-controls="sponsorQR">
+        <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        <span id="sponsorToggleLabel">顯示贊助資訊</span>
+      </button>
+
+      <!-- 收合時 hidden；JS 會同步 aria-expanded 與 hidden，兩者不可脫鉤 -->
+      <div class="sponsor__qr" id="sponsorQR" role="region" aria-labelledby="sponsorTitle" hidden>
+        <h3 class="sponsor__title">LINE Bank</h3>
+        <p class="sponsor__desc">帳戶：824 連線商業銀行（總行 6880）</p>
+        <p class="sponsor__desc">帳號：111018165754</p>
+      </div>
+    </div>
+
     <div class="sheet prose">
       <h3>使用說明</h3>
       <p>班次資訊仍請以社區公告欄或管理中心最新版本為準；如發現資訊有誤，歡迎隨時指正。</p>
@@ -376,30 +400,6 @@
           <div class="dots" role="group" aria-label="安裝步驟圖片"></div>
           <button class="slider__btn" type="button" data-slide-next aria-label="下一張"><svg aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
         </div>
-      </div>
-    </div>
-
-    <!-- ======================= 贊助（請開發者喝杯咖啡） ======================= -->
-    <div class="sheet sponsor" id="sponsor">
-      <div class="sponsor__head">
-        <span class="sponsor__icon" aria-hidden="true"><svg><use href="#i-coffee"/></svg></span>
-        <div class="sponsor__headtext">
-          <h3 class="sponsor__title" id="sponsorTitle">請開發者喝杯咖啡</h3>
-          <p class="sponsor__desc">這個時刻表是免費維護的。如果它幫到你，歡迎小額贊助，讓它能繼續更新。</p>
-        </div>
-      </div>
-
-      <button class="btn btn--quiet sponsor__toggle" type="button" id="sponsorToggle"
-              aria-expanded="false" aria-controls="sponsorQR">
-        <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
-        <span id="sponsorToggleLabel">顯示贊助資訊</span>
-      </button>
-
-      <!-- 收合時 hidden；JS 會同步 aria-expanded 與 hidden，兩者不可脫鉤 -->
-      <div class="sponsor__qr" id="sponsorQR" role="region" aria-labelledby="sponsorTitle" hidden>
-        <h3 class="sponsor__title">LINE Bank</h3>
-        <p class="sponsor__desc">帳戶：824 連線商業銀行（總行 6880）</p>
-        <p class="sponsor__desc">帳號：111018165754</p>
       </div>
     </div>
 

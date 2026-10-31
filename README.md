@@ -49,13 +49,95 @@ manifest.json         PWA manifest
 service-worker.js     離線快取（網路優先：index.html、data/*.json；快取優先：其餘靜態資源）
 version.json          版本號唯一來源
 js/data.js            時刻表資料（由 tools/build_snapshot.py 產生）
+js/holidays.js        節日與補班日清單（決定預設顯示平日或假日）
 js/core.js            行為層（不含任何顏色／間距決定）
 data/                 TDX 快照與公告設定
 images/               安裝步驟圖（WebP，全部 lazy loading）
 icon/                 App 圖示（192 / 512 / maskable / apple-touch）
 scripts/bump-version.sh  版本號一鍵同步
+scripts/update-holidays.js 產生節日清單（半自動，見下節）
 tools/                資料產生腳本
 ```
+
+---
+
+## 預設班表自動切換（6.5.0 新增）
+
+打開 App 時會依「今天」自動決定顯示平日或假日班表，不用再手動切。
+
+**判斷順序（不可顛倒）：**
+
+1. 使用者今天手動選過 → 用他的選擇（只在當天有效，隔天自動失效）
+2. 補班日（`workdays`）→ 平日 ← **必須先於節日與週末**，否則補班日會被「週末＝假日」蓋掉
+3. 國定假日（`holidays`）→ 假日
+4. 週六、週日 → 假日
+5. 其餘 → 平日
+
+**日期一律用台北時間**（`Intl.DateTimeFormat` + `Asia/Taipei`），不用 `toISOString()`。
+後者取的是 UTC，台北晚上 8 點後會算成隔天 —— 週日晚上 8 點就會跳成「週一平日」。
+
+**畫面上的提示列**（切換鈕下方 12px 小字，一般平日不顯示）：
+
+| 情況 | 顯示文字 | 右側連結 |
+|---|---|---|
+| 週六／週日 | 今天是週六，已自動切換為假日班表 | 改回平日 |
+| 國定假日 | 今天是中秋節，已自動切換為假日班表 | 改回平日 |
+| 補班日 | 今天是補班日，已自動切換為平日班表 | 改回假日 |
+| 使用者手動改過 | 已手動設為平日（今天有效） | 恢復自動 |
+| 一般平日 | 不顯示 | — |
+
+手動選擇存在 `localStorage` 的 `lhbs_daytype_override`，格式
+`{ date: 'YYYY-MM-DD', type: 'weekday'|'holiday' }`。讀取時比對日期，
+不是今天就自動清除 —— 昨天的選擇不會影響今天。
+
+---
+
+## 每年更新節日清單
+
+```bash
+node scripts/update-holidays.js 2027            # 產生 2027 年清單
+node scripts/update-holidays.js 2027 --template # 只輸出空白範本
+```
+
+**⚠️ 這支腳本是「半自動」，不是全自動。** 原因：
+
+1. 人事行政總處公布的行事曆是「新聞稿 + PDF/ODS 附表」，沒有穩定的 JSON API，
+   附表下載連結每次公告都換檔名。
+2. 政府資料開放平臺的資料集是 CSV/XML 打包下載，欄位名稱與編碼逐年變動。
+3. **最關鍵：放假規則本身會改。** 2025 年修法後取消彈性放假與補班，
+   2026 年起 `workdays` 變成空陣列。任何「照去年規則推算」的自動化都會錯。
+
+所以腳本會：嘗試連線 → 抓不到或格式不符就**明確報錯**，並輸出一份
+「週末與固定國曆假日已算好」的範本，你只需補農曆節日與補假日期。
+**絕不憑印象編造日期** —— 寧可留 TODO，也不要寫錯讓住戶搭錯車。
+
+填完後執行 `./scripts/bump-version.sh <新版本>` 升版。
+
+官方公告：https://www.dgpa.gov.tw/information?pid=12574&uid=83
+
+---
+
+## 手動部署步驟（不透過 git 時）
+
+1. 解壓縮 zip，確認根目錄有 `index.html`、`js/`、`style.css`、`service-worker.js`
+2. 登入 GitHub → 進入 `sc0720mr/lhbs_pwa` repo
+3. 點 **Add file → Upload files**，把解壓後的所有檔案拖進去
+   （GitHub 會覆蓋同名檔案；`js/holidays.js` 是新增檔，會一併上傳）
+4. Commit message 填「版本 6.5.0：預設班表自動切換」
+5. 等 1～2 分鐘 GitHub Pages 部署完成
+6. 開 https://sc0720mr.github.io/lhbs_pwa/?v=check 確認底部版本條顯示
+   `LHBS build 6.5.0 / cache v41`
+7. 手機上的 App 要**完全關掉再開**（或強制重新整理）才會換到新快取
+
+---
+
+## 本次修正（6.5.0）
+
+1. **預設班表自動切換** —— 新增 `js/holidays.js` 與三層判斷邏輯，
+   依台北時間自動決定平日／假日，並提供「改回」與「恢復自動」。
+2. **2026 年節日清單** —— 依人事行政總處 115 年辦公日曆表填入 16 筆，
+   逐日核對星期。2026 年因修法取消彈性放假，**沒有補班日**。
+3. **每年更新腳本** —— `scripts/update-holidays.js`（半自動，見上節）。
 
 ---
 

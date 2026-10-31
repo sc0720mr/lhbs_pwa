@@ -23,7 +23,7 @@
        3) <meta name="app-version"> 與 <meta name="app-cache-version">
      三者不一致，就代表檔案沒蓋好或快取還在供應舊版。
      --------------------------------------------------------------------- */
-  var BUILD = 'LHBS build 6.4.0 / cache v40';
+  var BUILD = 'LHBS build 6.5.0 / cache v41';
   try {
     console.log('%c' + BUILD, 'background:#08B898;color:#04231C;font-weight:700;padding:3px 8px;border-radius:2px');
   } catch (e) { /* console 不可用時忽略 */ }
@@ -289,6 +289,159 @@
 
   function isTyphoonDay() { return !!TYPHOON_SET[taipeiTodayKey()]; }
   function activeSchedule() { return isTyphoonDay() ? DATA.typhoonSchedule : DATA.normalSchedule; }
+
+  /* ---------------------------------------------------------------------
+     預設班表自動切換（平日 / 假日）
+     ---------------------------------------------------------------------
+     三層判斷，優先順序不可顛倒：
+       1. 使用者今天手動選過  → 用他的選擇（只在當天有效）
+       2. 補班日（workdays）  → 平日   ← 必須先於節日與週末，否則補班日
+                                        會被「週末＝假日」規則蓋掉
+       3. 國定假日（holidays）→ 假日
+       4. 週六、週日          → 假日
+       5. 其餘                → 平日
+
+     日期一律用 taipeiTodayKey()（Intl + Asia/Taipei），不用 toISOString()。
+     toISOString() 取的是 UTC，台北時間晚上 8 點後會算成隔天 —— 那會讓
+     週日晚上 8 點就跳成「週一平日」，隔天早上卻又變回來。
+     --------------------------------------------------------------------- */
+  var DAYTYPE_KEY = 'lhbs_daytype_override';
+  var CAL = window.LHBS_CALENDAR || { years: [], holidays: [], workdays: [] };
+
+  /* 把清單轉成 { 'YYYY-MM-DD': name } 的索引，查詢 O(1) */
+  function buildCalIndex(list) {
+    var idx = {};
+    toArray(list).forEach(function (it) {
+      if (!it) return;
+      var k = normalizeDateKey(it.date);
+      if (k) idx[k] = it.name || '';
+    });
+    return idx;
+  }
+  var HOLIDAY_IDX = buildCalIndex(CAL.holidays);
+  var WORKDAY_IDX = buildCalIndex(CAL.workdays);
+
+  var WEEKDAY_NAMES = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+
+  /* 取台北時間的星期（0=週日）。用 UTC 位移換算，避免受裝置時區影響。
+     ⚠️ normalizeDateKey() 回傳的是 2026/10/31（斜線），不是 2026-10-31。
+     這裡兩種分隔符都要吃，否則 split('-') 只會得到一個元素、星期永遠是 -1，
+     週末規則就整條失效（實際踩過這個坑）。 */
+  function taipeiWeekday(key) {
+    var p = String(key).split(/[\/\-.]/);
+    if (p.length !== 3) return -1;
+    var d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2], 12, 0, 0));
+    return d.getUTCDay();
+  }
+
+  /* 讀取手動覆蓋。日期不是今天 → 視為過期，順手清掉。 */
+  function readOverride() {
+    var raw = store.get(DAYTYPE_KEY, null);
+    if (!raw) return null;
+    var obj = null;
+    try { obj = JSON.parse(raw); } catch (e) { obj = null; }
+    if (!obj || !obj.date || (obj.type !== 'weekday' && obj.type !== 'holiday')) {
+      store.set(DAYTYPE_KEY, '');
+      return null;
+    }
+    if (obj.date !== taipeiTodayKey()) {
+      /* 昨天的選擇不該影響今天 —— 清掉，回到自動判斷 */
+      store.set(DAYTYPE_KEY, '');
+      return null;
+    }
+    return obj;
+  }
+  function writeOverride(type) {
+    try {
+      store.set(DAYTYPE_KEY, JSON.stringify({ date: taipeiTodayKey(), type: type }));
+    } catch (e) {}
+  }
+  function clearOverride() { store.set(DAYTYPE_KEY, ''); }
+
+  /* 核心：算出今天該用哪一套班表。
+     opts.ignoreOverride = true 時跳過手動覆蓋，只算「自然判斷」結果
+     （給「使用者點的正好是自動結果」與「重設」用）。 */
+  function resolveDayType(opts) {
+    opts = opts || {};
+    var today = taipeiTodayKey();
+    if (!opts.ignoreOverride) {
+      var ov = readOverride();
+      if (ov) {
+        return {
+          type: ov.type === 'holiday' ? 'holiday' : 'workday',
+          source: 'override',
+          label: ov.type === 'holiday' ? '假日' : '平日'
+        };
+      }
+    }
+    /* 2) 補班日優先 —— 補班日一定是週六日，先判斷才不會被週末規則蓋掉 */
+    if (WORKDAY_IDX[today] !== undefined) {
+      return { type: 'workday', source: 'workday', label: '平日', name: WORKDAY_IDX[today] };
+    }
+    /* 3) 國定假日 */
+    if (HOLIDAY_IDX[today] !== undefined) {
+      return { type: 'holiday', source: 'holiday', label: '假日', name: HOLIDAY_IDX[today] };
+    }
+    /* 4) 週末 */
+    var wd = taipeiWeekday(today);
+    if (wd === 0 || wd === 6) {
+      return { type: 'holiday', source: 'weekend', label: '假日', weekday: WEEKDAY_NAMES[wd] };
+    }
+    /* 5) 一般平日 */
+    return { type: 'workday', source: 'weekday', label: '平日', weekday: WEEKDAY_NAMES[wd] };
+  }
+
+  /* 把 state.day 與切換鈕的 aria-pressed 一起更新 */
+  function setDayUI(type) {
+    state.day = type;
+    $$('#segDay button').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-day') === type ? 'true' : 'false');
+    });
+  }
+
+  /* 更新切換鈕下方那行小字。一般平日不顯示，避免畫面變吵。 */
+  function renderDayHint() {
+    var hint = document.getElementById('dayHint');
+    var textEl = document.getElementById('dayHintText');
+    var btn = document.getElementById('dayHintBtn');
+    if (!hint || !textEl || !btn) return;
+
+    var r = resolveDayType();
+    var text = '';
+    var action = '';   /* 'toWorkday' | 'toHoliday' | 'auto' */
+
+    if (r.source === 'override') {
+      text = '已手動設為' + r.label + '（今天有效）';
+      action = 'auto';
+    } else if (r.source === 'workday') {
+      text = '今天是補班日，已自動切換為平日班表';
+      action = 'toHoliday';
+    } else if (r.source === 'holiday') {
+      text = '今天是' + (r.name || '國定假日') + '，已自動切換為假日班表';
+      action = 'toWorkday';
+    } else if (r.source === 'weekend') {
+      text = '今天是' + r.weekday + '，已自動切換為假日班表';
+      action = 'toWorkday';
+    } else {
+      /* 一般平日：不顯示 */
+      hint.hidden = true;
+      return;
+    }
+
+    textEl.textContent = text;
+    btn.textContent = action === 'auto' ? '恢復自動'
+      : (action === 'toWorkday' ? '改回平日' : '改回假日');
+    btn.setAttribute('data-dayhint-action', action);
+    hint.hidden = false;
+  }
+
+  /* 依自動判斷結果套用到畫面（不寫 override） */
+  function applyAutoDayType() {
+    var r = resolveDayType();
+    setDayUI(r.type);
+    renderDayHint();
+    return r;
+  }
 
   /* ---------------------------------------------------------------------
      主題
@@ -671,6 +824,50 @@
   bindSegmented('segDay', 'day', 'data-day');
   bindSegmented('segDir', 'dir', 'data-dir');
 
+  /* 使用者手動點「平日／假日」→ 寫入當天有效的 override，並更新提示列。
+     這裡刻意不呼叫 bindSegmented 的預設行為，而是額外掛一層：
+     先讓 bindSegmented 更新 state 與 aria-pressed，再補上 override 與提示。 */
+  (function bindDayOverride() {
+    var group = document.getElementById('segDay');
+    if (!group) return;
+    group.addEventListener('click', function (e) {
+      var btn = e.target.closest('button[data-day]');
+      if (!btn) return;
+      var picked = btn.getAttribute('data-day');
+      /* 若使用者選的正好等於「自然判斷」結果，等於不需要覆蓋 → 清掉 override，
+         提示列回到自動狀態，不會留下一個多餘的「已手動設定」。 */
+      var natural = resolveDayType({ ignoreOverride: true });
+      if (picked === natural.type) {
+        clearOverride();
+      } else {
+        writeOverride(picked);
+      }
+      renderDayHint();
+    });
+  })();
+
+  /* 提示列右側的「改回平日／改回假日／恢復自動」 */
+  (function bindDayHint() {
+    var btn = document.getElementById('dayHintBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var action = btn.getAttribute('data-dayhint-action');
+      if (action === 'auto') {
+        clearOverride();
+        applyAutoDayType();
+      } else if (action === 'toWorkday') {
+        writeOverride('weekday');
+        setDayUI('workday');
+        renderDayHint();
+      } else if (action === 'toHoliday') {
+        writeOverride('holiday');
+        setDayUI('holiday');
+        renderDayHint();
+      }
+      refreshScheduleViews();
+    });
+  })();
+
   var routeFilter = document.getElementById('routeFilter');
   if (routeFilter) {
     routeFilter.addEventListener('click', function (e) {
@@ -696,11 +893,13 @@
   var resetBtn = document.getElementById('resetScheduleBtn');
   if (resetBtn) {
     resetBtn.addEventListener('click', function () {
-      state.day = 'workday'; state.dir = 'to'; state.route = 'all'; state.upcomingOnly = false;
+      /* 重設＝回到「今天該有的預設」：清掉手動覆蓋，套用自動判斷結果。
+         原本寫死 state.day = 'workday'，在假日按重設會把使用者丟回平日班表。 */
+      clearOverride();
+      var r = applyAutoDayType();
+      state.day = r.type;
+      state.dir = 'to'; state.route = 'all'; state.upcomingOnly = false;
       if (upcomingToggle) upcomingToggle.checked = false;
-      $$('#segDay button').forEach(function (b) {
-        b.setAttribute('aria-pressed', b.getAttribute('data-day') === 'workday' ? 'true' : 'false');
-      });
       $$('#segDir button').forEach(function (b) {
         b.setAttribute('aria-pressed', b.getAttribute('data-dir') === 'to' ? 'true' : 'false');
       });
@@ -1422,6 +1621,11 @@
 
     renderPhones();
     applyPhoneSearch();
+
+    /* 開機第一件事：依「今天」決定預設班表（平日／假日）。
+       必須在 renderHero / renderSchedule 之前，否則首屏會先畫平日再跳假日。 */
+    applyAutoDayType();
+
     renderHero();
     renderSchedule(true);
     buildStops();
@@ -1461,6 +1665,9 @@
     filteredRows: filteredRows,
     nextDeparture: nextDeparture,
     totals: { departures: totalDepartures, stops: totalStops, sections: function () { return DATA.sections.length; }, phones: function () { return (DATA.phoneGroups || []).length; } },
+    /* 供測試與除錯用：查今天判斷成什麼、為什麼 */
+    dayType: function () { return resolveDayType(); },
+    dayTypeNatural: function () { return resolveDayType({ ignoreOverride: true }); },
     version: '3.0.0'
   };
 })();

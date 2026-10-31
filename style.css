@@ -1649,3 +1649,90 @@ a.ph:focus-visible .ph__call { opacity: 1; color: var(--green-deep); }
   color: #E5786F;
   background: rgba(229, 120, 111, .08);
 }
+
+/* ==========================================================================
+   自動判斷提示列（dayhint）
+   --------------------------------------------------------------------------
+   只在「週末／國定假日／補班日／使用者手動改過」時出現，一般平日 hidden。
+   高度固定 20px（line-height 20px），出現與否都不會推動下方版面。
+   右側連結是真正的 <button>，可鍵盤 Tab 到、可 Enter 觸發；
+   視覺高度 20px 但用 ::after 把命中區補到 44px。
+   ========================================================================== */
+.dayhint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  /* 父層 .ctrl 是「row」flex（label 在左、切換鈕在右），所以 align-self 只影響
+     垂直、width:100% 也無效 —— 實測這行只有 176px / 父層 313px，文字被擠成
+     兩行截斷。解法：讓 .ctrl--day 允許換行，提示列用 flex-basis:100% 獨占一行。 */
+  flex: 0 0 100%;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 6px 0 0;
+  min-height: 20px;
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--ink-2, #5A6472);
+}
+.dayhint[hidden] { display: none; }
+
+.dayhint__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dayhint__btn {
+  position: relative;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--accent, #08B898);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+/* 命中區：20px 文字 → 44px。垂直各補 12px，水平各補 8px。
+   右側沒有相鄰元素，不會與其他按鈕互搶。 */
+.dayhint__btn::after {
+  content: "";
+  position: absolute;
+  inset: -12px -8px;
+}
+.dayhint__btn:hover { color: var(--ink, #0B0E13); }
+.dayhint__btn:focus-visible {
+  outline: 2px solid var(--accent, #08B898);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+[data-theme="dark"] .dayhint { color: var(--ink-2, #9AA6B4); }
+[data-theme="dark"] .dayhint__btn { color: var(--accent, #2FD3B4); }
+[data-theme="dark"] .dayhint__btn:hover { color: #fff; }
+
+/* 手機：提示文字可能較長，允許換行但仍限制在兩行內，避免版面被撐高 */
+@media (max-width: 560px) {
+  .dayhint {
+    align-items: flex-start;
+    min-height: 20px;
+  }
+  .dayhint__text {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* 日期那一列允許換行，讓提示列獨占第二行（見 .dayhint 的 flex-basis:100%） */
+.ctrl--day { flex-wrap: wrap; }

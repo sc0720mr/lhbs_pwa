@@ -1,1 +1,466 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<!-- charset 必須是 <head> 的第一個元素（規範要求前 1024 bytes 內）：
+     原本它排在兩個 gtag <script> 之後，瀏覽器可能已用錯誤編碼開始解析。 -->
+<meta charset="utf-8">
+<!-- 主題必須在任何 CSS 之前決定，否則系統預設深色的使用者每次冷啟動
+     都會先看到一整片淺色再翻黑（FOUC）。這是一段阻塞式 inline script，
+     不依賴 core.js 的 defer 時機。 -->
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem('lhbs_theme');
+      var theme = (saved === 'dark' || saved === 'light') ? saved
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+  })();
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8J0N13G9LJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-8J0N13G9LJ');
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>水蓮車班時刻表</title>
+<meta name="description" content="水蓮山莊社區巴士及 591、F913 公車時刻表、站點資訊與即時到站查詢。">
+<meta name="author" content="Steven Chang">
+<!-- theme-color 分亮／暗兩組：單一值必然與另一種主題的外殼不一致，
+     Android 狀態列會出現一道色差色帶。 -->
+<meta name="theme-color" content="#0B0E13" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F6F7F9" media="(prefers-color-scheme: light)">
+<meta name="app-version" content="6.4.0">
+<meta name="app-cache-version" content="v40">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="水蓮車班時刻表">
+<link rel="manifest" href="manifest.json?v=6.4.0">
+<link rel="icon" type="image/png" sizes="32x32" href="icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon-180x180.png">
+<link rel="stylesheet" href="style.css?v=6.4.0">
+<!-- 觸控命中區補丁（6.4.0）
+     style.css 的「觸控命中區」區塊已把 .chip / .seg button / .iconbtn 等
+     用透明 ::after 往外擴到 44px，但 .iconbtn--sm 只有 32×32，
+     原本的 inset:-3px 只到 38px，仍低於 Apple HIG 的 44pt。
+     這裡單獨補到 -6px（32 + 12 = 44），視覺完全不變。
+     放在 index.html 而非 style.css，是因為 index.html 走 network-first，
+     改完立刻生效，不必等 service worker 換快取。 -->
+<style>
+  .iconbtn--sm::after { inset: -6px; }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">跳至主要內容</a>
+
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-bus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17V6.5A1.5 1.5 0 0 1 6.5 5h11A1.5 1.5 0 0 1 19 6.5V17"/><path d="M5 17h14"/><path d="M8 17v1.5M16 17v1.5"/><path d="M5 11.5h14"/><circle cx="8.5" cy="14.2" r=".8" fill="currentColor" stroke="none"/><circle cx="15.5" cy="14.2" r=".8" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 4.5v8.2a3.3 3.3 0 0 0 3.3 3.3h4.4a3.3 3.3 0 0 1 3.3 3.5"/><circle cx="6.5" cy="4.2" r="1.7" fill="currentColor" stroke="none"/><circle cx="17.5" cy="19.8" r="1.7" fill="currentColor" stroke="none"/><circle cx="11.4" cy="12.6" r="1.35" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5c4.2-3.6 6.5-6.7 6.5-9.7a6.5 6.5 0 0 0-13 0c0 3 2.3 6.1 6.5 9.7Z"/><circle cx="12" cy="10.4" r="2.3"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5h2.6l1.3 3.4-1.8 1.3a10.5 10.5 0 0 0 4.7 4.7l1.3-1.8 3.4 1.3v2.6a1.7 1.7 0 0 1-1.9 1.7A15.6 15.6 0 0 1 5.3 6.4 1.7 1.7 0 0 1 7 4.5Z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><circle cx="12" cy="8" r=".85" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-coffee" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9h11v5.2a4.3 4.3 0 0 1-4.3 4.3H8.8a4.3 4.3 0 0 1-4.3-4.3V9Z"/><path d="M15.5 10.4h1.7a2.2 2.2 0 0 1 0 4.4h-1.7"/><path d="M7.5 5.6v1.2M10.5 4.6v2.2M13.5 5.6v1.2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m6.5 9.5 5.5 5.5 5.5-5.5"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m14 6.5-5.5 5.5L14 17.5"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10 6.5 5.5 5.5L10 17.5"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13"/><path d="m12.5 6 6 6-6 6"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4.5V9H15"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10"/><path d="m8 10.5 4 4 4-4"/><path d="M5 19h14"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10.5a5 5 0 0 1 10 0c0 3.5 1.2 4.8 1.2 4.8H5.8S7 14 7 10.5Z"/><path d="M10.2 18.4a1.9 1.9 0 0 0 3.6 0"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v1.8M12 19.2V21M3 12h1.8M19.2 12H21M5.6 5.6l1.3 1.3M17.1 17.1l1.3 1.3M18.4 5.6l-1.3 1.3M6.9 17.1l-1.3 1.3"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 14.8A8 8 0 0 1 9.2 4.5a8 8 0 1 0 10.3 10.3Z"/></symbol>
+  <symbol id="i-offline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l16 16"/><path d="M8.4 15.6a5 5 0 0 1 6.4-.6"/><path d="M5.2 12.2a9.6 9.6 0 0 1 3.3-2"/><path d="M15.5 10.2a9.6 9.6 0 0 1 3.3 2"/><circle cx="12" cy="18.6" r=".9" fill="currentColor" stroke="none"/></symbol>
+</defs></svg>
+
+<!-- ===================== 品牌標頭：沿用原站 LOGO 圖檔 ===================== -->
+<header class="mast">
+  <div class="mast__inner">
+    <a class="brand" href="./" aria-label="水蓮社巴時刻表，回到首頁">
+      <img class="brand__mark" src="icon/favicon-196x196.png" width="46" height="46"
+           alt="" aria-hidden="true" decoding="async">
+      <span class="brand__text">
+        <span class="brand__zh">水蓮車班時刻表</span>
+        <span class="brand__en">Lotus Hill Bus Schedule</span>
+      </span>
+    </a>
+    <div class="mast__right">
+      <span class="sr-only" id="heroClock">--:--</span>
+      <div class="mast__actions">
+        <button class="iconbtn" id="installBtn" type="button" hidden aria-label="安裝這個 App 到主畫面">
+          <svg aria-hidden="true"><use href="#i-download"/></svg>
+        </button>
+        <button class="iconbtn" id="themeBtn" type="button" aria-label="切換深色模式" aria-pressed="false">
+          <svg aria-hidden="true"><use href="#i-moon" id="themeIcon"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav" id="nav" role="tablist" aria-label="主要功能">
+  <div class="nav__inner">
+    <button class="tab" type="button" role="tab" id="tab-schedule" aria-selected="true" aria-controls="panel-schedule" data-panel="schedule">
+      <svg aria-hidden="true"><use href="#i-clock"/></svg><span>時刻表</span>
+    </button>
+    <button class="tab" type="button" role="tab" id="tab-stops" aria-selected="false" aria-controls="panel-stops" data-panel="stops" tabindex="-1">
+      <svg aria-hidden="true"><use href="#i-pin"/></svg><span>站點</span>
+    </button>
+    <button class="tab" type="button" role="tab" id="tab-phone" aria-selected="false" aria-controls="panel-phone" data-panel="phone" tabindex="-1">
+      <svg aria-hidden="true"><use href="#i-phone"/></svg><span>電話</span>
+    </button>
+    <button class="tab" type="button" role="tab" id="tab-about" aria-selected="false" aria-controls="panel-about" data-panel="about" tabindex="-1">
+      <svg aria-hidden="true"><use href="#i-info"/></svg><span>關於</span>
+    </button>
+  </div>
+</nav>
+
+<main class="page" id="main">
+
+  <div class="notice" id="alertBanner" role="status" hidden>
+    <span class="notice__icon" aria-hidden="true"><svg><use href="#i-bell"/></svg></span>
+    <div class="notice__body">
+      <span class="notice__title" id="alertTitle">公告</span>
+      <span class="notice__text" id="alertText"></span>
+    </div>
+    <button class="iconbtn iconbtn--sm" id="alertClose" type="button" aria-label="關閉公告">
+      <svg aria-hidden="true"><use href="#i-close"/></svg>
+    </button>
+  </div>
+
+  <div class="offline" id="offlineNote" hidden>
+    <svg aria-hidden="true"><use href="#i-offline"/></svg>
+    <span>目前離線，顯示上次快取內容；時刻表仍可正常使用。</span>
+  </div>
+
+  <!-- ============================ 時刻表 ============================ -->
+  <section class="panel" id="panel-schedule" role="tabpanel" aria-labelledby="tab-schedule" tabindex="-1">
+
+    <div class="hero">
+      <div class="hero__body">
+        <div class="hero__top">
+          <span class="hero__label"><span class="live live--ink" aria-hidden="true"></span>下班車</span>
+          <span class="hero__cap" id="heroLabel">正在讀取時刻表…</span>
+        </div>
+        <div class="hero__main">
+          <div class="hero__time" id="heroTime">--:--</div>
+          <div class="hero__count" id="heroCount">—</div>
+        </div>
+        <div class="hero__route" id="heroRoute" hidden>
+          <span class="badge" id="heroBadge">社巴</span>
+          <span class="hero__dest" id="heroDest">—</span>
+        </div>
+        <p class="hero__empty" id="heroEmpty" hidden>今天已無後續班次。</p>
+        <div class="hero__next" id="heroNext" hidden></div>
+        <!-- live region 只留這一行：只有「下班車真的換了」才寫入。
+             原本 aria-live + aria-atomic 掛在整個 .hero 上，而 init() 每 30 秒
+             呼叫一次 refreshScheduleViews()，等於每 30 秒把時間、剩餘、路線、
+             目的地整段重唸一次。 -->
+        <p class="sr-only" id="heroAnnounce" aria-live="polite" aria-atomic="true"></p>
+      </div>
+      <div class="hero__perf" aria-hidden="true"></div>
+    </div>
+
+    <div class="layout">
+
+      <aside class="controls" aria-label="時刻表篩選條件">
+        <div class="ctrl">
+          <span class="ctrl__label" id="lbl-day">日期</span>
+          <div class="seg" role="group" aria-labelledby="lbl-day" aria-label="日期，二選一" id="segDay">
+            <button type="button" data-day="workday" aria-pressed="true">平日</button>
+            <button type="button" data-day="holiday" aria-pressed="false">假日</button>
+          </div>
+        </div>
+        <div class="ctrl">
+          <span class="ctrl__label" id="lbl-dir">方向</span>
+          <div class="seg" role="group" aria-labelledby="lbl-dir" aria-label="方向，二選一" id="segDir">
+            <button type="button" data-dir="to" aria-pressed="true">去程</button>
+            <button type="button" data-dir="from" aria-pressed="false">回程</button>
+          </div>
+        </div>
+        <div class="ctrl ctrl--grow">
+          <span class="ctrl__label">路線</span>
+          <div class="chips" id="routeFilter" role="group" aria-label="路線篩選">
+            <button class="chip is-active" type="button" data-route="all" aria-pressed="true">全部</button>
+            <button class="chip" type="button" data-route="社巴" aria-pressed="false"><span class="chip__dot" data-route="sheba"></span>社巴</button>
+            <button class="chip" type="button" data-route="591" aria-pressed="false"><span class="chip__dot" data-route="r591"></span>591</button>
+            <button class="chip" type="button" data-route="F913" aria-pressed="false"><span class="chip__dot" data-route="f913"></span>F913</button>
+          </div>
+        </div>
+        <div class="ctrl ctrl--end">
+          <label class="switch" for="upcomingOnly">
+            <input type="checkbox" id="upcomingOnly">
+            <span class="switch__track" aria-hidden="true"><span class="switch__knob"></span></span>
+            <span class="switch__text">只看接下來班次</span>
+          </label>
+          <button class="btn btn--quiet btn--xs btn--full" id="scrollToNow" type="button" hidden>
+            <svg aria-hidden="true"><use href="#i-arrow-right"/></svg>跳到最近班次
+          </button>
+        </div>
+      </aside>
+
+      <div class="board">
+        <div class="board__head">
+          <h2 class="board__title" id="scheduleTitle">完整時刻表</h2>
+          <span class="board__count" id="scheduleCount"></span>
+        </div>
+        <div class="thead" aria-hidden="true">
+          <span>時</span><span>發車</span><span>路線</span><span>起訖</span><span>剩餘</span>
+        </div>
+        <div class="deps" id="scheduleList" role="list" aria-labelledby="scheduleTitle"></div>
+        <div class="empty" id="scheduleEmpty" hidden>
+          <span class="empty__icon" aria-hidden="true"><svg><use href="#i-clock"/></svg></span>
+          <p class="empty__title">沒有符合條件的班次</p>
+          <p class="empty__desc">試著切換「假日」、改用其他路線篩選，或關閉「只看接下來」。</p>
+          <button class="btn btn--quiet btn--sm" type="button" id="resetScheduleBtn">重置篩選條件</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet prose" id="designNote-schedule">
+      <h3>【免責聲明】</h3>
+      <p>本網頁之公車與社巴動態資訊係串接「交通部 TDX 運具資料交換平台」之開放資料。因受車機訊號、網路傳輸或官方資料源更新頻率影響，實際到站時間可能與現場略有落差。本網站不對因 API 延遲或中斷所造成的行程延誤承擔責任。</p>
+    </div>
+
+    <p class="sitefoot">Ver. 114.02.04 · Build 2024.11.05 · 介面重構 v4.0.0（Nightline）<br>Copyright © 2024 Steven Chang. All rights reserved.</p>
+  </section>
+
+  <!-- ============================ 站點 ============================ -->
+  <section class="panel" id="panel-stops" role="tabpanel" aria-labelledby="tab-stops" tabindex="-1" hidden>
+
+    <div class="phead">
+      <h2 class="phead__title">站點資訊</h2>
+      <p class="phead__desc">10 條行駛方向、225 個站位。點站名可開啟 Google Maps 導航。</p>
+    </div>
+
+    <div class="search" id="stopSearchWrap">
+      <svg aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="search" id="stopSearch" placeholder="搜尋站名或路線，例如：水蓮、東湖、591" aria-label="搜尋站名或路線" autocomplete="off" enterkeyhint="search">
+      <button class="search__clear" type="button" id="stopSearchClear" aria-label="清除搜尋">
+        <svg aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </div>
+
+    <div class="tdx">
+      <div class="tdx__head">
+        <h3 class="tdx__title"><span class="dot" id="tdxDot" aria-hidden="true"></span>即時到站</h3>
+        <span class="mode" id="tdxMode">載入中</span>
+        <button class="btn btn--quiet btn--xs" id="refreshTdx" type="button">
+          <svg aria-hidden="true"><use href="#i-refresh"/></svg>更新
+        </button>
+      </div>
+      <p class="tdx__summary" id="tdxSummary">正在整理站點資料…</p>
+      <div class="tdx__meta">
+        <span class="sync" id="syncStatus" role="status">即時資料待載入</span>
+        <span class="countdown" id="tdxCountdown"></span>
+      </div>
+    </div>
+
+    <div class="chips chips--scroll" id="stopAnchors" role="group" aria-label="跳到路線區段"></div>
+    <div class="sections" id="stopSections"></div>
+
+    <div class="empty" id="stopsEmpty" hidden>
+      <span class="empty__icon" aria-hidden="true"><svg><use href="#i-search"/></svg></span>
+      <p class="empty__title">找不到符合的站點</p>
+      <p class="empty__desc">換個關鍵字試試，例如「水蓮山莊」、「東湖國小」或路線「F913」。</p>
+      <button class="btn btn--quiet btn--sm" type="button" id="clearStopSearch">清除搜尋</button>
+    </div>
+
+    <div class="sheet prose" id="designNote-stops">
+      <h3>【免責聲明】</h3>
+      <p>本網頁之公車與社巴動態資訊係串接「交通部 TDX 運具資料交換平台」之開放資料。因受車機訊號、網路傳輸或官方資料源更新頻率影響，實際到站時間可能與現場略有落差。本網站不對因 API 延遲或中斷所造成的行程延誤承擔責任。</p>
+    </div>
+
+    <p class="sitefoot">Ver. 114.02.04 · Build 2024.11.05 · 介面重構 v4.0.0（Nightline）<br>Copyright © 2024 Steven Chang. All rights reserved.</p>
+  </section>
+
+  <!-- ============================ 電話 ============================ -->
+  <section class="panel" id="panel-phone" role="tabpanel" aria-labelledby="tab-phone" tabindex="-1" hidden>
+
+    <div class="phead">
+      <h2 class="phead__title">社區服務電話</h2>
+      <p class="phead__desc">點號碼即可直撥。同單位的多支號碼已整併於同一張卡片。</p>
+    </div>
+
+    <div class="search" id="phoneSearchWrap">
+      <svg aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="search" id="phoneSearch" placeholder="搜尋單位名稱或號碼，例如：服務中心、2690" aria-label="搜尋單位名稱或電話號碼" autocomplete="off" enterkeyhint="search">
+      <button class="search__clear" type="button" id="phoneSearchClear" aria-label="清除搜尋">
+        <svg aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </div>
+
+    <div class="resultbar" id="phoneResultBar" aria-live="polite"></div>
+    <div class="units" id="phoneGroups"></div>
+
+    <div class="empty" id="phoneEmpty" hidden>
+      <span class="empty__icon" aria-hidden="true"><svg><use href="#i-phone"/></svg></span>
+      <p class="empty__title">找不到符合的單位</p>
+      <p class="empty__desc">試試「管理中心」、「警衛」或電話前幾碼「2690」。</p>
+      <button class="btn btn--quiet btn--sm" type="button" id="clearPhoneSearch">清除搜尋</button>
+    </div>
+
+    <div class="sheet prose" id="designNote-phone">
+      <h3>【免責聲明】</h3>
+      <p>本網頁之公車與社巴動態資訊係串接「交通部 TDX 運具資料交換平台」之開放資料。因受車機訊號、網路傳輸或官方資料源更新頻率影響，實際到站時間可能與現場略有落差。本網站不對因 API 延遲或中斷所造成的行程延誤承擔責任。</p>
+    </div>
+
+    <p class="sitefoot">Ver. 114.02.04 · Build 2024.11.05 · 介面重構 v4.0.0（Nightline）<br>Copyright © 2024 Steven Chang. All rights reserved.</p>
+  </section>
+
+  <!-- ============================ 關於 ============================ -->
+  <section class="panel" id="panel-about" role="tabpanel" aria-labelledby="tab-about" tabindex="-1" hidden>
+
+    <div class="phead">
+      <h2 class="phead__title">關於時刻表</h2>
+      <p class="phead__desc">熱心住戶自主維護，內容參考管理委員會公布之社巴時刻表。</p>
+    </div>
+
+    <!-- ======================= 贊助（請開發者喝杯咖啡） ======================= -->
+    <div class="sheet sponsor" id="sponsor">
+      <div class="sponsor__head">
+        <span class="sponsor__icon" aria-hidden="true"><svg><use href="#i-coffee"/></svg></span>
+        <div class="sponsor__headtext">
+          <h3 class="sponsor__title" id="sponsorTitle">請開發者喝杯咖啡</h3>
+          <p class="sponsor__desc">這個時刻表是免費維護的。如果它幫到你，歡迎小額贊助，讓它能繼續更新。</p>
+        </div>
+      </div>
+
+      <button class="btn btn--quiet sponsor__toggle" type="button" id="sponsorToggle"
+              aria-expanded="false" aria-controls="sponsorQR">
+        <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        <span id="sponsorToggleLabel">顯示贊助資訊</span>
+      </button>
+
+      <!-- 收合時 hidden；JS 會同步 aria-expanded 與 hidden，兩者不可脫鉤 -->
+      <div class="sponsor__qr" id="sponsorQR" role="region" aria-labelledby="sponsorTitle" hidden>
+        <h3 class="sponsor__title">LINE Bank</h3>
+        <p class="sponsor__desc">帳戶：824 連線商業銀行（總行 6880）</p>
+        <p class="sponsor__desc">帳號：111018165754</p>
+      </div>
+    </div>
+
+    <div class="sheet prose">
+      <h3>使用說明</h3>
+      <p>班次資訊仍請以社區公告欄或管理中心最新版本為準；如發現資訊有誤，歡迎隨時指正。</p>
+
+      <h3>資料來源</h3>
+      <dl class="meta">
+        <div class="meta__row"><dt>時刻表版本</dt><dd id="metaVersion">—</dd></div>
+        <div class="meta__row"><dt>班次筆數</dt><dd id="metaDepartures">—</dd></div>
+        <div class="meta__row"><dt>站點區段</dt><dd id="metaSections">—</dd></div>
+        <div class="meta__row"><dt>即時到站</dt><dd>TDX 運輸資料流通服務</dd></div>
+        <div class="meta__row"><dt>頁面版本</dt><dd>4.0.0（Nightline）</dd></div>
+      </dl>
+
+      <h3>加入手機主畫面</h3>
+      <p class="muted">加入後可全螢幕開啟，並在離線時檢視時刻表。</p>
+
+      <h4>iPhone / iPad</h4>
+      <ol class="steps">
+        <li>以 Safari 開啟本頁。</li>
+        <li>點選底部工具列的「分享」。（若工具列消失，請將頁面稍微上滑）</li>
+        <li>在分享選單中選擇「加入主畫面」。</li>
+        <li>可自行修改名稱，完成後點選「新增」。</li>
+      </ol>
+      <div class="slider" id="iosSlider" data-slider="ios">
+        <div class="slider__frame">
+          <div class="slider__track" id="iosViewport">
+            <div class="slide"><img src="images/ios_step1.webp?v=6.4.0" alt="iPhone 安裝步驟 1：以 Safari 開啟時刻表" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/ios_step2.webp?v=6.4.0" alt="iPhone 安裝步驟 2：點選底部分享按鈕" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/ios_step3.webp?v=6.4.0" alt="iPhone 安裝步驟 3：選擇加入主畫面" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/ios_step4.webp?v=6.4.0" alt="iPhone 安裝步驟 4：命名後新增" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
+          </div>
+        </div>
+        <div class="slider__nav">
+          <button class="slider__btn" type="button" data-slide-prev aria-label="上一張"><svg aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+          <div class="dots" role="group" aria-label="安裝步驟圖片"></div>
+          <button class="slider__btn" type="button" data-slide-next aria-label="下一張"><svg aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+        </div>
+      </div>
+
+      <h4>Android</h4>
+      <ol class="steps">
+        <li>以 Chrome 開啟本頁，點選右上角「更多」選單。</li>
+        <li>選擇「安裝應用程式」或「加到主畫面」。</li>
+        <li>確認後即可在桌面看到捷徑圖示。</li>
+      </ol>
+      <div class="slider" id="androidSlider" data-slider="android">
+        <div class="slider__frame">
+          <div class="slider__track" id="androidViewport">
+            <div class="slide"><img src="images/android_step1.webp?v=6.4.0" alt="Android 安裝步驟 1：以 Chrome 開啟時刻表" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step2.webp?v=6.4.0" alt="Android 安裝步驟 2：開啟右上角更多選單" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step3.webp?v=6.4.0" alt="Android 安裝步驟 3：選擇安裝應用程式" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step4.webp?v=6.4.0" alt="Android 安裝步驟 4：確認安裝" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step5.webp?v=6.4.0" alt="Android 安裝步驟 5：桌面上出現捷徑" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step6.webp?v=6.4.0" alt="Android 安裝步驟 6：點選捷徑開啟" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+          </div>
+        </div>
+        <div class="slider__nav">
+          <button class="slider__btn" type="button" data-slide-prev aria-label="上一張"><svg aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+          <div class="dots" role="group" aria-label="安裝步驟圖片"></div>
+          <button class="slider__btn" type="button" data-slide-next aria-label="下一張"><svg aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet prose" id="designNote-about">
+      <h3>【免責聲明】</h3>
+      <p>本網頁之公車與社巴動態資訊係串接「交通部 TDX 運具資料交換平台」之開放資料。因受車機訊號、網路傳輸或官方資料源更新頻率影響，實際到站時間可能與現場略有落差。本網站不對因 API 延遲或中斷所造成的行程延誤承擔責任。</p>
+    </div>
+
+    <p class="sitefoot">Ver. 114.02.04 · Build 2024.11.05 · 介面重構 v4.0.0（Nightline）<br>Copyright © 2024 Steven Chang. All rights reserved.</p>
+  </section>
+
+</main>
+
+<div class="modal" id="boardingModal" role="dialog" aria-modal="true" aria-labelledby="boardingTitle" aria-describedby="boardingBody" hidden>
+  <div class="modal__card">
+    <span class="modal__icon" aria-hidden="true"><svg><use href="#i-bus"/></svg></span>
+    <h2 class="modal__title" id="boardingTitle">搭乘社巴請使用悠遊卡<br>或悠遊付乘車碼</h2>
+    <p class="modal__body" id="boardingBody">上車刷卡一次即可，到站可直接下車。</p>
+    <div class="modal__actions">
+      <button class="btn btn--primary" type="button" id="boardingOk">我知道了</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js?v=6.4.0" defer></script>
+<script src="js/core.js?v=6.4.0" defer></script>
+<script>
+if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' })
+      .then(function (reg) {
+        function activateNow(w) {
+          if (!w) return;
+          w.addEventListener('statechange', function () {
+            if (w.state === 'installed' && navigator.serviceWorker.controller) w.postMessage({ type: 'SKIP_WAITING' });
+          });
+        }
+        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        if (reg.installing) activateNow(reg.installing);
+        reg.addEventListener('updatefound', function () { activateNow(reg.installing); });
+        reg.update().catch(function () {});
+      })
+      .catch(function () {});
+    var reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (reloading) return;
+      reloading = true;
+      window.location.reload();
+    });
+  });
+}
+</script>
+</body>
+</html>

@@ -14,11 +14,11 @@
  *
  * ⚠️ 常見陷阱（v35 起特別標記）：
  *    index.html 的 ?v= 與這裡的 CACHE_VERSION 必須「一起」加一。
- *     只改其中一個，瀏覽器會因爲網址相同而命中舊快取，
- *     就會出現「檔案已經改了、畫面卻還是舊的」。
+ *    只改其中一個，瀏覽器會因為網址相同而命中舊快取，
+ *    就會出現「檔案已經改了、畫面卻還是舊的」。
  * ------------------------------------------------------------------------ */
 
-const CACHE_VERSION = 'v39';
+const CACHE_VERSION = 'v40';
 const CACHE_NAME = 'lhbs-greenline-' + CACHE_VERSION;
 
 /* 用相對路徑結尾比對，避免 absolute path 在子目錄下失效 */
@@ -46,7 +46,7 @@ const APP_ASSETS = [
   './icon/icon-maskable-512.png',
   './icon/apple-touch-icon-180x180.png',
   /* 贊助 QR Code：離線也要看得到，所以加入預快取。
-     換成自己的 QR 圖時，只要檔名路徑不變，这里就不用動。
+     換成自己的 QR 圖時，只要檔名路徑不變，這裡就不用動。
   './images/linepay_qr.webp' */
 ];
 

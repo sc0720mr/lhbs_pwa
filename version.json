@@ -1,0 +1,5 @@
+{
+  "version": "6.4.0",
+  "cache": "v40",
+  "note": "這是全站唯一的版本來源。改版時只改這個檔，然後執行 scripts/bump-version.sh 同步所有位置。"
+}

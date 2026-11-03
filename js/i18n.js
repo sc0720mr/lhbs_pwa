@@ -168,6 +168,12 @@
       'tdx.snapshot': '快照',
       'tdx.unavailable': '無法取得',
       'tdx.approaching': '進站中',
+      'tdx.arriving': '進站中',
+      'tdx.minShort': '{n} 分',
+      'tdx.modeLive': '即時',
+      'tdx.modeStale': '快照·非即時',
+      'tdx.modeSnapshot': '快照',
+      'tdx.modeError': '無法取得',
       'tdx.soon': '即將到站',
       'tdx.updated': 'TDX 更新：',
       'tdx.dataTime': '（資料時間 ',
@@ -248,6 +254,21 @@
       'boarding.body': '上車刷卡一次即可，到站可直接下車。',
       'boarding.ok': '我知道了',
 
+      /* ---- 6.6.1 補漏：靜態 HTML 與動態字串 ---- */
+      'skip.link': '跳至主要內容',
+      'meta.title': '水蓮車班時刻表',
+      'meta.desc': '水蓮山莊社區巴士及 591、F913 公車時刻表、站點資訊與即時到站查詢。',
+      'brand.aria': '水蓮社巴時刻表，回到首頁',
+      'nav.aria': '主要功能',
+      'about.iosTitle': 'iPhone / iPad',
+      'about.androidTitle': 'Android',
+      'about.pageVersionValue': '4.0.0（Nightline）',
+      'phone.clearSearch': '清除搜尋',
+      'stops.modeLoading': '載入中',
+      'stops.sectionCount': ' 站',
+      'board.empty.title': '沒有符合條件的班次',
+      'hero.badgeFallback': '社巴',
+
       /* ---- 其他 ---- */
       'misc.stops': ' 站'
     },
@@ -255,7 +276,10 @@
     'en': {
       /* ---- 站名 / 品牌 ---- */
       'brand.title': 'Lotus Hill Bus Schedule',
-      'brand.en': '水蓮車班時刻表',
+      /* 英文模式的副標題不要放中文。
+         原本這裡是「水蓮車班時刻表」，等於英文介面下仍有一行中文，
+         看起來就像漏翻。改成英文副標，語意更清楚。 */
+      'brand.en': 'Community Shuttle Timetable',
       'brand.aria': 'Lotus Hill community bus schedule — back to home',
 
       /* ---- 分頁 ---- */
@@ -391,6 +415,12 @@
       'tdx.snapshot': 'Snapshot',
       'tdx.unavailable': 'Unavailable',
       'tdx.approaching': 'Arriving',
+      'tdx.arriving': 'Arriving',
+      'tdx.minShort': '{n} min',
+      'tdx.modeLive': 'Live',
+      'tdx.modeStale': 'Snapshot · not live',
+      'tdx.modeSnapshot': 'Snapshot',
+      'tdx.modeError': 'Unavailable',
       'tdx.soon': 'Arriving soon',
       'tdx.updated': 'TDX updated: ',
       'tdx.dataTime': '(data time ',
@@ -470,6 +500,21 @@
       'boarding.title': 'Please use an EasyCard or the<br>EasyWallet boarding code',
       'boarding.body': 'Tap once when boarding; simply get off at your stop.',
       'boarding.ok': 'Got it',
+
+      /* ---- 6.6.1 補漏：靜態 HTML 與動態字串 ---- */
+      'skip.link': 'Skip to main content',
+      'meta.title': 'Lotus Hill Bus Schedule',
+      'meta.desc': 'Lotus Hill community shuttle and bus 591 / F913 timetables, stop information and live arrival times.',
+      'brand.aria': 'Lotus Hill shuttle timetable — back to home',
+      'nav.aria': 'Main sections',
+      'about.iosTitle': 'iPhone / iPad',
+      'about.androidTitle': 'Android',
+      'about.pageVersionValue': '4.0.0 (Nightline)',
+      'phone.clearSearch': 'Clear search',
+      'stops.modeLoading': 'Loading',
+      'stops.sectionCount': ' stops',
+      'board.empty.title': 'No departures match',
+      'hero.badgeFallback': 'Shuttle',
 
       /* ---- 其他 ---- */
       'misc.stops': ' stops'
@@ -602,6 +647,9 @@
     'F913延 去程': 'F913 Ext. · Outbound',
     'F913延（忠三街口）回程': 'F913 Ext. · Return',
     'F913延 回程': 'F913 Ext. · Return',
+    /* 班表資料裡的路線欄位就是「F913延」三個字（沒有去/回程後綴），
+       上面四筆是區段標題用的。少了這一筆，英文模式的班次列會直接顯示「F913延」。 */
+    'F913延': 'F913 Ext.',
     'F913社后線公車平日及假日去程': 'F913 Shehou Line · Outbound',
     'F913社后線公車平日及假日回程': 'F913 Shehou Line · Return',
     'F913社后線延(忠三街口)公車平日及假日去程': 'F913 Shehou Ext. (Zhong 3rd St.) · Outbound',
@@ -634,6 +682,46 @@
   };
   Object.keys(SECTION_EXTRA).forEach(function (k) {
     if (!PROPER[k]) PROPER[k] = SECTION_EXTRA[k];
+  });
+
+  /* 電話頁的單位名稱（data.js 的 phoneGroups[].unit）。
+     這些是「商家／櫃檯名稱」而非站名，但同樣是專有名詞，走同一張對照表。
+     原則：連鎖品牌用官方英文名（全家便利商店 → FamilyMart），
+     社區自營單位用意譯（服務中心 → Service Center），
+     個人姓名用漢語拼音（董文燕 → Dong Wenyan）。 */
+  var PHONE_UNITS = {
+    '城事不動產': 'City Realty',
+    '城事 - 董文燕': 'City Realty — Dong Wenyan',
+    '城事 - 虞明思': 'City Realty — Yu Mingsi',
+    '服務中心': 'Service Center',
+    '中控大門警衛': 'Main Gate Security',
+    '生活館': 'Life Center',
+    '樂活天地': 'Lohas Club',
+    '郵局代辦所': 'Post Office Counter',
+    '康大幼兒園': 'Kangda Kindergarten',
+    '全家便利商店': 'FamilyMart',
+    '自助洗衣': 'Self-service Laundry',
+    '臻妮髮藝': 'Zhenni Hair Salon',
+    '樂．美甲': 'Le Nail Studio',
+    '服飾店-吳小姐': 'Clothing Store — Ms. Wu',
+    '樂廚': 'Le Kitchen',
+    '小廚房': 'Little Kitchen',
+    '東豐科技': 'Dongfeng Technology',
+    '磐石之家': 'Rock House',
+    'Pizza的家': "Pizza's Home",
+    '健身工作室': 'Fitness Studio',
+    '力揚機械車位': 'Liyang Mechanical Parking'
+  };
+  Object.keys(PHONE_UNITS).forEach(function (k) {
+    if (!PROPER[k]) PROPER[k] = PHONE_UNITS[k];
+  });
+
+  /* 電話備註（data.js 的 phoneGroups[].note） */
+  var PHONE_NOTES = {
+    '水電修繕': 'Plumbing & electrical repairs'
+  };
+  Object.keys(PHONE_NOTES).forEach(function (k) {
+    if (!NOTES[k]) NOTES[k] = PHONE_NOTES[k];
   });
 
   /* ======================================================================

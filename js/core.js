@@ -23,7 +23,7 @@
        3) <meta name="app-version"> 與 <meta name="app-cache-version">
      三者不一致，就代表檔案沒蓋好或快取還在供應舊版。
      --------------------------------------------------------------------- */
-  var BUILD = 'LHBS build 6.6.0 / cache v42';
+  var BUILD = 'LHBS build 6.6.1 / cache v43';
   try {
     console.log('%c' + BUILD, 'background:#08B898;color:#04231C;font-weight:700;padding:3px 8px;border-radius:2px');
   } catch (e) { /* console 不可用時忽略 */ }
@@ -251,8 +251,14 @@
     if (diffMin <= 0) return T('rel.departing');
     var h = Math.floor(diffMin / 60), m = diffMin % 60;
     if (diffMin < 60) return T('rel.minAfter', { n: diffMin });
-    return T('rel.hourAfter', { h: h }) + (m ? ' ' + T('rel.minSuffix').replace(/^\s+/, '') + ' ' + m : '') +
-      (isEn() ? '' : T('rel.hourSuffix'));
+    /* 英文的 rel.hourAfter 是 'in {h} hr'、rel.minSuffix 是 ' min'，
+       中文則是 '{h} 小時' + ' 分' + '後'。
+       舊寫法把 minSuffix 去掉前導空白再接數字，英文就變成「4 hr min 10」。
+       改成：英文用「in 4 hr 10 min」、中文用「4 小時 10 分後」。 */
+    if (isEn()) {
+      return T('rel.hourAfter', { h: h }) + (m ? ' ' + m + T('rel.minSuffix') : '');
+    }
+    return T('rel.hourAfter', { h: h }) + (m ? ' ' + m + T('rel.minSuffix') : '') + T('rel.hourSuffix');
   }
   /* 清單列的「剩餘」欄一律有值。遠班次用「2時39」的緊湊寫法，
      不能留白 —— 一欄 68px 卻整片空白，看起來像壞掉。 */
@@ -490,6 +496,14 @@
     /* 5) 一般平日 */
     return { type: 'workday', source: 'weekday', label: '平日', weekday: WEEKDAY_NAMES[wd], weekdayText: T('weekday.' + wd) };
   }
+
+  /* 唯讀除錯出口：讓自動化測試能直接問「今天該用哪一套班表」，
+     不必去猜 DOM。只暴露純函式，不提供任何寫入能力。 */
+  window.LHBS_DAY = {
+    resolve: function (opts) { return resolveDayType(opts); },
+    todayKey: function () { return taipeiTodayKey(); },
+    weekday: function (k) { return taipeiWeekday(k || taipeiTodayKey()); }
+  };
 
   /* 把 state.day 與切換鈕的 aria-pressed 一起更新 */
   function setDayUI(type) {
@@ -793,12 +807,12 @@
       var showFrom = susp ? true : (!p.to || p.from !== prevFrom);
       if (!susp) prevFrom = p.from;
       var rel = rowRelText(m - now, isPast);
-      var spokenRel = isPast ? '已發車' : relativeText(m - now);
+      var spokenRel = isPast ? T('rel.departed') : relativeText(m - now);
       var cls = 'dep' + (susp ? ' is-susp' : '') + (isNext ? ' is-next' : '') +
         (isPast ? ' is-past' : '') + (hourStart ? ' is-hour-start' : '');
-      var spoken = t + '，' + route + '，' +
+      var spoken = t + '，' + (I18N && I18N.routeLabel ? I18N.routeLabel(route) : route) + '，' +
         (susp ? T('dest.suspended')
-              : P(p.from) + (p.to ? T('dest.to') + termText(p.to).replace(/^往/, '') : '') + '，' + spokenRel);
+              : P(p.from) + (p.to ? ' ' + T('dest.to') + ' ' + termText(p.to) : '') + '，' + spokenRel);
 
       /* 終站標籤 .dep__term —— 本次修正的核心。
          原本 <520px 時 .dep__dest 被 display:none，手機完全看不到「南港火車站 / 東湖捷運站」
@@ -817,14 +831,14 @@
         '<span class="dep__dest' + (showFrom ? '' : ' dep__dest--cont') + '" aria-hidden="true">' +
           (susp ? '' :
             (showFrom ? '<span class="dep__from">' + escapeHtml(P(p.from)) + '</span>' : '') +
-            (p.to ? '<span class="dep__sep">→</span><span class="dep__to">' + escapeHtml(P(p.to)) + '</span>' : '')) +
+            (p.to ? '<span class="dep__sep">→</span><span class="dep__to">' + escapeHtml(termText(p.to)) + '</span>' : '')) +
         '</span>' +
         termHtml +
         /* 停駛用「剩餘」欄承載：那一欄在每一個斷點都存在（手機在 grid 第 3 欄），
            而「剩餘 3 分」對一班不開的車本來就沒有意義。
            這樣不必新增 grid 欄位、不必動任何版面骨架，手機與桌機都看得到。 */
         '<span class="dep__rel' + (susp ? ' dep__rel--susp' : '') + '" aria-hidden="true">' +
-          (susp ? '<span class="dep__state">停駛</span>' : escapeHtml(rel)) +
+          (susp ? '<span class="dep__state">' + escapeHtml(T('dest.suspended')) + '</span>' : escapeHtml(rel)) +
         '</span>' +
       '</div>';
     }).join('');
@@ -853,9 +867,9 @@
 
     if (!next) {
       timeEl.textContent = '--:--';
-      if (countEl) countEl.textContent = '今日已無班次';
-      if (labelEl) labelEl.textContent = (state.day === 'holiday' ? '假日' : '平日') + '／' +
-        (state.dir === 'to' ? '去程' : '回程') + '，請參考完整時刻表';
+      if (countEl) countEl.textContent = T('hero.noToday');
+      if (labelEl) labelEl.textContent = T(state.day === 'holiday' ? 'day.holiday' : 'day.workday') + ' / ' +
+        T(state.dir === 'to' ? 'dir.to' : 'dir.from') + T('hero.dayDirSuffix');
       if (routeEl) routeEl.hidden = true;
       if (nextEl) nextEl.hidden = true;
       if (emptyEl) emptyEl.hidden = false;
@@ -868,11 +882,11 @@
     var p = destParts(row[2]);
     timeEl.textContent = row[0];
     if (countEl) countEl.textContent = relativeText(next.diff);
-    if (labelEl) labelEl.textContent = next.diff <= 0 ? '車輛即將離站' : '預計發車';
+    if (labelEl) labelEl.textContent = next.diff <= 0 ? T('hero.leaving') : T('hero.estimated');
 
     if (routeEl) routeEl.hidden = false;
-    if (badgeEl) { badgeEl.textContent = row[1]; badgeEl.setAttribute('data-route', routeKey(row[1])); }
-    if (destEl) destEl.textContent = p.to ? p.from + ' → ' + p.to : p.from;
+    if (badgeEl) { badgeEl.textContent = I18N && I18N.routeLabel ? I18N.routeLabel(row[1]) : row[1]; badgeEl.setAttribute('data-route', routeKey(row[1])); }
+    if (destEl) destEl.textContent = p.to ? P(p.from) + ' → ' + termText(p.to) : P(p.from);
 
     /* 「後三班」也只列會開的：列一班停駛的「06:50」在標題寫著「預計發車」的卡片上，
        等於叫使用者去等一班不會來的車。 */
@@ -883,7 +897,7 @@
         nextEl.hidden = false;
         nextEl.innerHTML = following.map(function (r) {
           return '<span class="nxt" data-route="' + routeKey(r[1]) + '">' +
-            '<b>' + escapeHtml(r[0]) + '</b><i>' + escapeHtml(r[1]) + '</i></span>';
+            '<b>' + escapeHtml(r[0]) + '</b><i>' + escapeHtml(I18N && I18N.routeLabel ? I18N.routeLabel(r[1]) : r[1]) + '</i></span>';
         }).join('');
       }
     }
@@ -908,9 +922,10 @@
     var sig = row[0] + '|' + row[1] + '|' + (diff <= 0 ? 'now' : 'soon');
     if (sig === lastAnnounced) return;
     lastAnnounced = sig;
-    host.textContent = '下班車 ' + row[0] + '，' + row[1] + '，' +
-      (p.to ? '往' + p.to.replace(/^往/, '') : p.from) + '，' +
-      (diff <= 0 ? '即將發車' : relativeText(diff));
+    host.textContent = T('hero.announce') + row[0] + '，' +
+      (I18N && I18N.routeLabel ? I18N.routeLabel(row[1]) : row[1]) + '，' +
+      (p.to ? T('dest.to') + ' ' + termText(p.to) : P(p.from)) + '，' +
+      (diff <= 0 ? T('rel.departing') : relativeText(diff));
   }
 
   function refreshScheduleViews() {
@@ -1047,7 +1062,7 @@
     return '<li class="stop-item" data-name="' + escapeHtml(st.name) + '">' +
       '<span class="stop-dot" aria-hidden="true"></span>' +
       '<a class="stop-name-text" href="' + maps + '" target="_blank" rel="noopener noreferrer">' +
-        escapeHtml(st.name) +
+        escapeHtml(P(st.name)) +
       '</a>' +
       '<span class="stop-go" aria-hidden="true">↗</span>' +
     '</li>';
@@ -1064,10 +1079,10 @@
         '<summary class="sect__head">' +
           '<span class="sect__swatch" aria-hidden="true"></span>' +
           '<span class="sect__text">' +
-            '<span class="sect__title">' + escapeHtml(sec.short || sec.title) + '</span>' +
-            (sec.note ? '<span class="sect__note">' + escapeHtml(sec.note) + '</span>' : '') +
+            '<span class="sect__title">' + escapeHtml(I18N && I18N.routeLabel ? I18N.routeLabel(sec.short || sec.title) : (sec.short || sec.title)) + '</span>' +
+            (sec.note ? '<span class="sect__note">' + escapeHtml(I18N && I18N.note ? I18N.note(sec.note) : sec.note) + '</span>' : '') +
           '</span>' +
-          '<span class="sect__count">' + sec.stops.length + ' 站</span>' +
+          '<span class="sect__count">' + sec.stops.length + escapeHtml(T('stops.sectionCount')) + '</span>' +
           '<span class="sect__caret" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-chevron-down"/></svg></span>' +
         '</summary>' +
         '<ul class="sect__list">' + sec.stops.map(stopItemHtml).join('') + '</ul>' +
@@ -1077,7 +1092,7 @@
     if (anchors) {
       anchors.innerHTML = DATA.sections.map(function (sec, i) {
         return '<button class="chip" type="button" data-anchor="sec-' + i + '" data-route="' + routeKey(sec.route) + '">' +
-          '<span class="chip__dot" aria-hidden="true"></span>' + escapeHtml(sec.label) + '</button>';
+          '<span class="chip__dot" aria-hidden="true"></span>' + escapeHtml(I18N && I18N.routeLabel ? I18N.routeLabel(sec.label) : sec.label) + '</button>';
       }).join('');
       anchors.addEventListener('click', function (e) {
         var btn = e.target.closest('button[data-anchor]');
@@ -1122,7 +1137,7 @@
       var countEl = card.querySelector('.sect__count');
       if (countEl) {
         var idx = +card.getAttribute('data-section');
-        countEl.textContent = (kw ? visible : (DATA.sections[idx] ? DATA.sections[idx].stops.length : visible)) + ' 站';
+        countEl.textContent = (kw ? visible : (DATA.sections[idx] ? DATA.sections[idx].stops.length : visible)) + T('stops.sectionCount');
       }
     });
 
@@ -1171,7 +1186,7 @@
       var dot = document.getElementById('tdxDot');
       if (el) {
         el.className = 'mode ' + (mode === 'live' ? 'is-live' : mode === 'snapshot-stale' ? 'is-stale' : mode === 'snapshot' ? 'is-snap' : 'is-error');
-        el.textContent = mode === 'live' ? '即時' : mode === 'snapshot-stale' ? '快照·非即時' : mode === 'snapshot' ? '快照' : '無法取得';
+        el.textContent = mode === 'live' ? T('tdx.modeLive') : mode === 'snapshot-stale' ? T('tdx.modeStale') : mode === 'snapshot' ? T('tdx.modeSnapshot') : T('tdx.modeError');
       }
       if (dot) dot.className = 'dot ' + (mode === 'live' ? 'is-live' : mode === 'snapshot-stale' ? 'is-stale' : 'is-idle');
     }
@@ -1184,10 +1199,10 @@
       var sec = rec.estimateTime, status = rec.stopStatus;
       if (sec === null || sec === undefined) return '';
       if (status !== 0 && status !== 1) return '';
-      if (sec <= 30) return '進站中';
+      if (sec <= 30) return T('tdx.arriving');
       var mins = Math.round(sec / 60);
-      if (mins <= 0) return '即將到站';
-      return mins + ' 分';
+      if (mins <= 0) return T('tdx.approaching');
+      return T('tdx.minShort', { n: mins });
     }
     function keyOf(route, dir, stopID) { return route + '|' + dir + '|' + stopID; }
 
@@ -1268,10 +1283,10 @@
     }
 
     function summarize(result, mode) {
-      var stamp = lastGeneratedAt ? '（資料時間 ' + fmtTime(lastGeneratedAt) + '）' : '';
-      var tail = mode === 'live' ? '' : '目前為快照、非即時。';
-      var extra = result.noEta ? '社巴非 TDX 路線，不提供預估時間。' : '';
-      setSummary(result.shown + ' 個站位有預估到站時間' + stamp + '。' + extra + tail);
+      var stamp = lastGeneratedAt ? T('tdx.dataTime') + fmtTime(lastGeneratedAt) + '）' : '';
+      var tail = mode === 'live' ? '' : T('tdx.snapshotNote');
+      var extra = result.noEta ? T('tdx.shebaNoEta') : '';
+      setSummary(result.shown + T('tdx.stopsWithEta') + stamp + '。' + extra + tail);
     }
 
     function fetchLive() {
@@ -1289,7 +1304,7 @@
     function update(silent) {
       if (inFlight) return Promise.resolve();
       inFlight = true;
-      if (!silent) setSync('正在同步 TDX 資料…');
+      if (!silent) setSync(T('tdx.syncing'));
 
       var loadSections = sectionsCache
         ? Promise.resolve(sectionsCache)
@@ -1307,7 +1322,7 @@
             result = renderIndex(liveMap);
             lastGeneratedAt = new Date().toISOString();
             setMode('live');
-            setSync('已更新 ' + result.shown + ' 個站位 · ' + clockText());
+            setSync(T('tdx.updatedN') + result.shown + T('tdx.updatedStops') + clockText());
           } else {
             mode = 'snapshot';
             result = renderIndex(indexFromSections(sectionsCache));
@@ -1333,7 +1348,7 @@
     function tick() {
       if (!nextAt) { setCountdown(''); return; }
       var left = Math.max(0, Math.ceil((nextAt - Date.now()) / 1000));
-      setCountdown(left > 0 ? left + ' 秒後更新' : '更新中…');
+      setCountdown(left > 0 ? T('tdx.secLater', { n: left }) : T('tdx.updating'));
       if (left <= 0 && !inFlight) update(true);
     }
 
@@ -1406,20 +1421,20 @@
 
     wrap.innerHTML = groups.map(function (g) {
       var lines = g.lines.map(function (l) {
-        var ext = (l.ext && /^\d+$/.test(l.ext)) ? '<span class="ph__ext">分機 ' + escapeHtml(l.ext) + '</span>' : '';
+        var ext = (l.ext && /^\d+$/.test(l.ext)) ? '<span class="ph__ext">' + escapeHtml(T('phone.ext')) + escapeHtml(l.ext) + '</span>' : '';
         if (!l.tel) {
-          return '<div class="ph ph--muted"><span class="ph__num">分機 ' + escapeHtml(l.ext) + '</span></div>';
+          return '<div class="ph ph--muted"><span class="ph__num">' + escapeHtml(T('phone.ext')) + escapeHtml(l.ext) + '</span></div>';
         }
         return '<a class="ph" href="' + escapeHtml(l.href || ('tel:' + l.tel.replace(/[^0-9+]/g, ''))) + '"' +
-            ' aria-label="撥打 ' + escapeHtml(g.unit) + ' ' + escapeHtml(l.tel) + '">' +
+            ' aria-label="' + escapeHtml(T('phone.callAria') + P(g.unit) + ' ' + l.tel) + '">' +
           '<span class="ph__num">' + escapeHtml(l.tel) + '</span>' + ext +
-          '<span class="ph__call" aria-hidden="true">撥號</span>' +
+          '<span class="ph__call" aria-hidden="true">' + escapeHtml(T('phone.call')) + '</span>' +
         '</a>';
       }).join('');
-      var hay = (g.unit + ' ' + (g.note || '') + ' ' + g.lines.map(function (l) { return l.tel + ' ' + (l.ext || ''); }).join(' ')).toLowerCase();
+      var hay = (g.unit + ' ' + (I18N && I18N.properEn ? I18N.properEn(g.unit) : '') + ' ' + (g.note || '') + ' ' + g.lines.map(function (l) { return l.tel + ' ' + (l.ext || ''); }).join(' ')).toLowerCase();
       return '<div class="unit" data-search="' + escapeHtml(hay) + '">' +
-        '<div class="unit__head"><span class="unit__name">' + escapeHtml(g.unit) + '</span>' +
-        (g.note ? '<span class="unit__note">' + escapeHtml(g.note) + '</span>' : '') + '</div>' +
+        '<div class="unit__head"><span class="unit__name">' + escapeHtml(P(g.unit)) + '</span>' +
+        (g.note ? '<span class="unit__note">' + escapeHtml(I18N && I18N.note ? I18N.note(g.note) : g.note) + '</span>' : '') + '</div>' +
         '<div class="unit__lines">' + lines + '</div>' +
       '</div>';
     }).join('');
@@ -1441,8 +1456,8 @@
     var bar = document.getElementById('phoneResultBar');
     if (bar) {
       bar.innerHTML = kw
-        ? '找到 <b>' + shown + '</b> 個單位（共 ' + total + '）'
-        : '共 <b>' + total + '</b> 個單位 · 點號碼直撥';
+        ? T('phone.foundPrefix') + shown + T('phone.foundSuffix') + total + ')'
+        : T('phone.totalPrefix') + total + T('phone.totalSuffix');
     }
     var emptyEl = document.getElementById('phoneEmpty');
     if (emptyEl) emptyEl.hidden = !(kw && shown === 0);
@@ -1480,8 +1495,7 @@
           /* 原本用 role="tab"，但父層是 role="group"、也沒有 tabpanel，
              屬於語意錯誤（實測 10 個孤兒 tab），輔助技術會回報不存在的 Tab 關係。
              圓點只是「第 n 張」的跳轉鈕，用 aria-current 就夠。 */
-          return '<button class="dot" type="button" aria-label="第 ' + (i + 1) + ' 張，共 ' +
-            slides.length + ' 張" aria-current="' + (i === 0 ? 'true' : 'false') + '"></button>';
+          return '<button class="dot" type="button" aria-label="' + escapeHtml(T('slider.dotLabel') + (i + 1) + T('slider.dotOf') + slides.length + T('slider.dotSuffix')) + '" aria-current="' + (i === 0 ? 'true' : 'false') + '"></button>';
         }).join('');
       }
       var dots = $$('.dot', root);
@@ -1659,7 +1673,7 @@
       sponsorToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       sponsorQR.hidden = !open;
       if (sponsorToggleLabel) {
-        sponsorToggleLabel.textContent = open ? '收合贊助資訊' : '顯示贊助資訊';
+        sponsorToggleLabel.textContent = open ? T('about.sponsorHide') : T('about.sponsorShow');
       }
     };
 
@@ -1759,6 +1773,55 @@
     for (var s = 0; s < sub.length; s++) {
       sub[s].textContent = T(isEn() ? 'brand.en' : 'brand.en');
     }
+
+    /* 安裝步驟清單：HTML 裡是中文原文，這裡整批換掉。
+       用 <ol> 的既有 <li> 數量對齊字典陣列，長度不同就重建。 */
+    localizeSteps('iosSteps', 'about.iosSteps');
+    localizeSteps('androidSteps', 'about.androidSteps');
+
+    /* 安裝步驟圖的 alt（螢幕閱讀器會唸，也算未翻譯） */
+    localizeStepImages();
+
+    /* 輪播的 aria-label */
+    var prevs = document.querySelectorAll('[data-slide-prev]');
+    for (var pv = 0; pv < prevs.length; pv++) prevs[pv].setAttribute('aria-label', T('slider.prev'));
+    var nexts = document.querySelectorAll('[data-slide-next]');
+    for (var nx = 0; nx < nexts.length; nx++) nexts[nx].setAttribute('aria-label', T('slider.next'));
+    var dots = document.querySelectorAll('.dots');
+    for (var dt = 0; dt < dots.length; dt++) dots[dt].setAttribute('aria-label', T('slider.dotsAria'));
+
+    /* <title> 與 meta description */
+    try { document.title = T('meta.title'); } catch (e) {}
+    var md = document.querySelector('meta[name="description"]');
+    if (md) md.setAttribute('content', T('meta.desc'));
+  }
+
+  /* 把 <ol id="..."> 的 <li> 換成字典裡的句子 */
+  function localizeSteps(id, key) {
+    var ol = document.getElementById(id);
+    if (!ol) return;
+    var arr = T(key);
+    if (!Array.isArray(arr)) return;
+    var lis = ol.querySelectorAll('li');
+    if (lis.length === arr.length) {
+      for (var i = 0; i < lis.length; i++) lis[i].textContent = arr[i];
+    } else {
+      ol.innerHTML = arr.map(function (s) { return '<li>' + escapeHtml(s) + '</li>'; }).join('');
+    }
+  }
+
+  /* 安裝步驟圖 alt：用「第 n 步：說明」組出來 */
+  function localizeStepImages() {
+    ['ios', 'android'].forEach(function (kind) {
+      var slider = document.getElementById(kind + 'Slider');
+      if (!slider) return;
+      var texts = T('about.' + kind + 'StepTexts');
+      var imgs = slider.querySelectorAll('.slide img');
+      for (var i = 0; i < imgs.length; i++) {
+        var desc = (Array.isArray(texts) && texts[i]) ? texts[i] : '';
+        imgs[i].setAttribute('alt', T('about.imgAlt.' + kind, { n: i + 1, desc: desc }));
+      }
+    });
   }
 
   /* 語言切換後：不用重新整理，就地重繪所有動態內容 */
@@ -1777,6 +1840,9 @@
     if (mSec) mSec.textContent = DATA.sections.length + (isEn() ? ' segments / ' : ' 段 / ') + totalStops() + T('misc.stops');
     if (typeof renderPhones === 'function') renderPhones();
     if (typeof applyPhoneSearch === 'function') applyPhoneSearch();
+    /* 站點區塊是「只建一次」的（stopsRendered 旗標），語言切換必須強制重建，
+       否則站名、區段標題、說明都會停在切換前的語言。 */
+    stopsRendered = false;
     if (typeof buildStops === 'function') buildStops();
     renderDayHint();
     renderHero();
@@ -1820,10 +1886,14 @@
     var mDep = document.getElementById('metaDepartures');
     if (mDep) {
       var b = departureBreakdown();
-      mDep.textContent = totalDepartures() + ' 筆（平日 ' + b.workday + ' · 假日 ' + b.holiday + '）';
+      mDep.textContent = isEn()
+        ? totalDepartures() + ' trips (' + T('day.workday') + ' ' + b.workday + ' · ' + T('day.holiday') + ' ' + b.holiday + ')'
+        : totalDepartures() + ' 筆（' + T('day.workday') + ' ' + b.workday + ' · ' + T('day.holiday') + ' ' + b.holiday + '）';
     }
     var mSec = document.getElementById('metaSections');
-    if (mSec) mSec.textContent = DATA.sections.length + ' 段 / ' + totalStops() + ' 站';
+    if (mSec) mSec.textContent = isEn()
+      ? DATA.sections.length + ' segments / ' + totalStops() + T('misc.stops')
+      : DATA.sections.length + ' 段 / ' + totalStops() + T('misc.stops');
     var mVer = document.getElementById('metaVersion');
     if (mVer) mVer.textContent = DATA.version || '—';
 

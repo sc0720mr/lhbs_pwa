@@ -1,7 +1,7 @@
 {
   "name": "水蓮車班時刻表",
   "short_name": "水蓮時刻表",
-  "description": "水蓮山莊社區巴士、591、F913 時刻表與站點即時到站資訊",
+  "description": "水蓮山莊社區巴士、591、F913 時刻表與站點即時到站資訊｜Lotus Hill community bus, 591 & F913 timetable with live arrivals (bilingual 中/EN)",
   "id": "./",
   "start_url": "./index.html",
   "scope": "./",

@@ -49,7 +49,8 @@ manifest.json         PWA manifest
 service-worker.js     離線快取（網路優先：index.html、data/*.json；快取優先：其餘靜態資源）
 version.json          版本號唯一來源
 js/data.js            時刻表資料（由 tools/build_snapshot.py 產生）
-js/holidays.js        節日與補班日清單（決定預設顯示平日或假日）
+js/holidays.js        節日與補班日清單（決定預設顯示平日或假日，含 nameEn 英文名）
+js/i18n.js            中英雙語字典（zh-TW / en，含 68 個站名對照表）
 js/core.js            行為層（不含任何顏色／間距決定）
 data/                 TDX 快照與公告設定
 images/               安裝步驟圖（WebP，全部 lazy loading）
@@ -128,6 +129,35 @@ node scripts/update-holidays.js 2027 --template # 只輸出空白範本
 6. 開 https://sc0720mr.github.io/lhbs_pwa/?v=check 確認底部版本條顯示
    `LHBS build 6.5.0 / cache v41`
 7. 手機上的 App 要**完全關掉再開**（或強制重新整理）才會換到新快取
+
+---
+
+## 本次修正（6.6.0）
+
+### 1. 中英雙語介面
+
+新增 `js/i18n.js`，`zh-TW` / `en` 兩份字典，所有介面文字都經由 `t('key')` 查表。
+
+- 首次開啟依 `navigator.languages` / `navigator.language` 自動判斷（`zh` 開頭 → 繁中，其他 → 英文）
+- 右上角「中 / EN」按鈕可切換，選擇存 `localStorage.lhbs_lang`，下次記住
+- 切換即時生效，不需重新整理（`relocalize()` 重繪所有動態區塊）
+- `<html lang>` 隨語言更新（`zh-Hant-TW` / `en`），CSS 用 `html[lang="en"]` 統一讓步英文較長的字串
+
+**專有名詞處理**：不翻譯站牌上的中文，英文模式採「中文 + 英文」併排
+（`東湖捷運站 Donghu MRT Station`）—— 外籍住戶到現場才對得上中文站牌。
+終站標籤因空間有限，改用純英文短標籤。
+
+節日名稱由 `js/holidays.js` 的 `nameEn` 提供，未填則退回中文名。
+
+### 2. 假日班表終站顯示
+
+**根因**：`style.css` 在 `< 520px` 時對 `.dep__dest` 設 `display: none`，
+所以手機上完全看不到「南港火車站」與「東湖捷運站」的差別。
+資料本身沒問題 —— 新舊版 `normalSchedule.holiday` 逐筆比對**完全相同**。
+
+**修法**：新增 `.dep__term` 終站標籤，只放終站（不含起點），全斷點都顯示，
+並用 `data-term` 上色區分四種終站（南港朱紅、東湖藍、國泰綠、汐湖琥珀、忠三紫）。
+手機改 4 欄 grid：[時間] [路線] [終站] [剩餘]。
 
 ---
 

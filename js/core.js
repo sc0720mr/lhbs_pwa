@@ -23,7 +23,7 @@
        3) <meta name="app-version"> 與 <meta name="app-cache-version">
      三者不一致，就代表檔案沒蓋好或快取還在供應舊版。
      --------------------------------------------------------------------- */
-  var BUILD = 'LHBS build 6.5.0 / cache v41';
+  var BUILD = 'LHBS build 6.6.0 / cache v42';
   try {
     console.log('%c' + BUILD, 'background:#08B898;color:#04231C;font-weight:700;padding:3px 8px;border-radius:2px');
   } catch (e) { /* console 不可用時忽略 */ }
@@ -179,20 +179,89 @@
     if (name === '591') return 'r591';
     return 'sheba';
   }
+  /* i18n：所有面向使用者的字串都走 T()（= LHBS_I18N.t）。
+     T 若不存在（例如舊快取把 i18n.js 漏掉）就退回 key 本身，不會拋錯。 */
+  var I18N = window.LHBS_I18N || null;
+  function T(key, vars) {
+    if (I18N && I18N.t) return I18N.t(key, vars);
+    return key;
+  }
+  /* 專有名詞：中文模式回中文、英文模式回「中文 English」 */
+  function P(zh) {
+    if (I18N && I18N.proper) return I18N.proper(zh);
+    return zh;
+  }
+  function isEn() { return !!(I18N && I18N.isEn && I18N.isEn()); }
+  /* 節日名稱：holidays.js 可提供 nameEn；沒有就用中文名 */
+  function holidayName(entry) {
+    if (!entry) return '';
+    if (isEn() && entry.nameEn) return entry.nameEn;
+    return entry.name || '';
+  }
+
+  /* ---- 終站分類：給顏色代碼與短標籤用 ----------------------------------
+     假日班表實際出現 4 種終站（南港火車站、東湖捷運站、國泰醫院、汐湖橋口），
+     平日則以水蓮／南港為主。用「包含」判斷而非完全相等，因為資料裡同一站
+     有「東湖捷運站」與「東湖捷運站(3號出口)」兩種寫法。 */
+  function termKey(to) {
+    if (!to) return 'none';
+    var t = stripTo(to);
+    if (t.indexOf('南港') !== -1) return 'nangang';
+    if (t.indexOf('東湖') !== -1) return 'donghu';
+    if (t.indexOf('汐湖') !== -1) return 'xihu';
+    if (t.indexOf('忠三') !== -1) return 'zhong3';
+    if (t.indexOf('國泰') !== -1) return 'cathay';
+    if (t.indexOf('水蓮') !== -1) return 'lotus';
+    return 'other';
+  }
+
+  /* 終站短標籤：空間有限，英文模式只取英文、中文模式只取中文。
+     不做「中文 English」併排 —— 標籤要能塞進 390px 的一行。
+     注意：data.js 的目的地字串本身帶「往」前綴（例：往東湖捷運站），
+     標籤已經有箭頭，前綴必須去掉，否則會變成「→ 往東湖捷運站」，
+     而且英文對照表也會查不到（key 是「東湖捷運站」）。 */
+  function termPlain(to) {
+    if (!to) return '';
+    /* data.js 用的箭頭是 U+279E（➞ 粗箭頭），不是 U+2192（→）。
+       兩種都要吃，否則「水蓮 ➞ 東湖捷運站」整串會原樣留在標籤上。 */
+    return String(to)
+      .replace(/[\uFE0E\uFE0F]/g, '')
+      .replace(/\s*[\u2192\u2794\u279E\u27A1\u279C\u27F6\uFF1E]\s*/g, '\u2192')
+      .trim();
+  }
+  /* 去掉「往」前綴。data.js 裡的目的地有三種寫法：
+       「水蓮 ➞ 東湖捷運站」   → 取箭頭後面
+       「往東湖捷運站」        → 去掉「往」
+       「東湖捷運站」          → 原樣
+     不處理的話，標籤會出現「→ 往東湖捷運站」（箭頭＋往重複），
+     英文對照表也會查不到（key 是「東湖捷運站」）。 */
+  function stripTo(to) {
+    var t = termPlain(to);
+    if (t.indexOf('\u2192') !== -1) t = t.split('\u2192').pop();
+    return t.replace(/^往/, '').trim();
+  }
+  function termText(to) {
+    var t = stripTo(to);
+    if (!t) return '';
+    if (!isEn()) return t;
+    return (I18N && I18N.properEn) ? I18N.properEn(t) : t;
+  }
+
   function relativeText(diffMin) {
-    if (diffMin <= 0) return '即將發車';
-    if (diffMin < 60) return diffMin + ' 分後';
+    if (diffMin <= 0) return T('rel.departing');
     var h = Math.floor(diffMin / 60), m = diffMin % 60;
-    return h + ' 小時' + (m ? ' ' + m + ' 分' : '') + '後';
+    if (diffMin < 60) return T('rel.minAfter', { n: diffMin });
+    return T('rel.hourAfter', { h: h }) + (m ? ' ' + T('rel.minSuffix').replace(/^\s+/, '') + ' ' + m : '') +
+      (isEn() ? '' : T('rel.hourSuffix'));
   }
   /* 清單列的「剩餘」欄一律有值。遠班次用「2時39」的緊湊寫法，
      不能留白 —— 一欄 68px 卻整片空白，看起來像壞掉。 */
   function rowRelText(diffMin, isPast) {
-    if (isPast) return '已發車';
-    if (diffMin <= 0) return '即將';
-    if (diffMin <= 59) return diffMin + ' 分';
+    if (isPast) return T('rel.departed');
+    if (diffMin <= 0) return T('rel.departingShort');
+    if (diffMin <= 59) return T('rel.minShort', { n: diffMin });
     var h = Math.floor(diffMin / 60), m = diffMin % 60;
-    return h + '時' + (m ? pad(m) : '');
+    return T('rel.hourShort', { h: h + (m ? '.' + pad(m) : '') });
   }
   function fmtTime(iso) {
     if (!iso) return '';
@@ -249,6 +318,23 @@
   /* 台北的「今天」。用 en-CA 的 YYYY-MM-DD 再正規化，不依賴 zh-TW 的輸出格式 ——
      這樣即使瀏覽器改了在地化格式（例如某天變成 2026年10月22日），判定也不會跟著壞。 */
   function taipeiTodayKey() {
+    /* 測試／驗證用覆寫。兩個來源，順序：
+       1. ?today=YYYY-MM-DD —— 直接開網址即可（但 SPA 的 replaceState 會把 query 洗掉，
+          所以只適合「開頁即讀」的情境，例如自動化測試第一次載入）
+       2. localStorage.lhbs_test_today —— 供 reload 後仍持續生效（SPA 導航後 query 會消失）
+       沒有這兩個值時，完全走真實時鐘。 */
+    try {
+      var m = /[?&]today=(\d{4}-\d{2}-\d{2})\b/.exec(window.location.search || '');
+      if (m) {
+        var forcedQ = normalizeDateKey(m[1]);
+        if (forcedQ) return forcedQ;
+      }
+    } catch (e) {}
+    try {
+      var forcedL = normalizeDateKey(localStorage.getItem('lhbs_test_today'));
+      if (forcedL) return forcedL;
+    } catch (e) {}
+
     var d = new Date();
     try {
       var parts = new Intl.DateTimeFormat('en-CA', {
@@ -314,7 +400,11 @@
     toArray(list).forEach(function (it) {
       if (!it) return;
       var k = normalizeDateKey(it.date);
-      if (k) idx[k] = it.name || '';
+      /* 存「整個物件」而不是只存 name。
+         原本只存 it.name（字串），結果 holidayName() 拿到的是一串中文，
+         entry.nameEn / entry.name 都是 undefined，於是提示變成「今天是國定假日」，
+         節日名稱永遠帶不出來。存物件後 nameEn 才用得到。 */
+      if (k) idx[k] = it;
     });
     return idx;
   }
@@ -322,6 +412,13 @@
   var WORKDAY_IDX = buildCalIndex(CAL.workdays);
 
   var WEEKDAY_NAMES = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+
+  /* 把 2026/10/31 或 2026-10-31 統一轉成 YYYY-MM-DD（存檔、寫 localStorage 用） */
+  function isoDateKey(key) {
+    var p = String(key).split(/[\/\-.]/);
+    if (p.length !== 3) return '';
+    return p[0] + '-' + ('0' + p[1]).slice(-2) + '-' + ('0' + p[2]).slice(-2);
+  }
 
   /* 取台北時間的星期（0=週日）。用 UTC 位移換算，避免受裝置時區影響。
      ⚠️ normalizeDateKey() 回傳的是 2026/10/31（斜線），不是 2026-10-31。
@@ -344,8 +441,9 @@
       store.set(DAYTYPE_KEY, '');
       return null;
     }
-    if (obj.date !== taipeiTodayKey()) {
-      /* 昨天的選擇不該影響今天 —— 清掉，回到自動判斷 */
+    if (normalizeDateKey(obj.date) !== taipeiTodayKey()) {
+      /* 昨天的選擇不該影響今天 —— 清掉，回到自動判斷。
+         兩邊都先經 normalizeDateKey()，所以存 '2026-10-31' 或 '2026/10/31' 都能正確比對。 */
       store.set(DAYTYPE_KEY, '');
       return null;
     }
@@ -353,7 +451,9 @@
   }
   function writeOverride(type) {
     try {
-      store.set(DAYTYPE_KEY, JSON.stringify({ date: taipeiTodayKey(), type: type }));
+      /* 存標準的 YYYY-MM-DD，不要存 normalizeDateKey() 的斜線格式——
+         斜線是內部比對用的 key，寫進 localStorage 會讓外部工具（例如手動檢查或匯出）看不懂。 */
+      store.set(DAYTYPE_KEY, JSON.stringify({ date: isoDateKey(taipeiTodayKey()), type: type }));
     } catch (e) {}
   }
   function clearOverride() { store.set(DAYTYPE_KEY, ''); }
@@ -376,19 +476,19 @@
     }
     /* 2) 補班日優先 —— 補班日一定是週六日，先判斷才不會被週末規則蓋掉 */
     if (WORKDAY_IDX[today] !== undefined) {
-      return { type: 'workday', source: 'workday', label: '平日', name: WORKDAY_IDX[today] };
+      return { type: 'workday', source: 'workday', label: '平日', name: WORKDAY_IDX[today], nameText: holidayName(WORKDAY_IDX[today]) };
     }
     /* 3) 國定假日 */
     if (HOLIDAY_IDX[today] !== undefined) {
-      return { type: 'holiday', source: 'holiday', label: '假日', name: HOLIDAY_IDX[today] };
+      return { type: 'holiday', source: 'holiday', label: '假日', name: HOLIDAY_IDX[today], nameText: holidayName(HOLIDAY_IDX[today]) };
     }
-    /* 4) 週末 */
+    /* 4) 週末 —— 星期名要跟語言走（週六 / Saturday） */
     var wd = taipeiWeekday(today);
     if (wd === 0 || wd === 6) {
-      return { type: 'holiday', source: 'weekend', label: '假日', weekday: WEEKDAY_NAMES[wd] };
+      return { type: 'holiday', source: 'weekend', label: '假日', weekday: WEEKDAY_NAMES[wd], weekdayText: T('weekday.' + wd) };
     }
     /* 5) 一般平日 */
-    return { type: 'workday', source: 'weekday', label: '平日', weekday: WEEKDAY_NAMES[wd] };
+    return { type: 'workday', source: 'weekday', label: '平日', weekday: WEEKDAY_NAMES[wd], weekdayText: T('weekday.' + wd) };
   }
 
   /* 把 state.day 與切換鈕的 aria-pressed 一起更新 */
@@ -411,26 +511,27 @@
     var action = '';   /* 'toWorkday' | 'toHoliday' | 'auto' */
 
     if (r.source === 'override') {
-      text = '已手動設為' + r.label + '（今天有效）';
+      text = T('dayhint.overridden', { label: T(r.label === '假日' ? 'day.holiday' : 'day.workday') });
       action = 'auto';
     } else if (r.source === 'workday') {
-      text = '今天是補班日，已自動切換為平日班表';
+      text = T('dayhint.workday');
       action = 'toHoliday';
     } else if (r.source === 'holiday') {
-      text = '今天是' + (r.name || '國定假日') + '，已自動切換為假日班表';
+      /* 節日名稱：holidays.js 可帶 nameEn，由 resolveDayType 預先擇定 */
+      text = T('dayhint.holiday', { name: r.nameText || T('dayhint.holidayFallback') });
       action = 'toWorkday';
     } else if (r.source === 'weekend') {
-      text = '今天是' + r.weekday + '，已自動切換為假日班表';
+      text = T('dayhint.weekend', { weekday: r.weekdayText || '' });
       action = 'toWorkday';
-    } else {
+    } else {  
       /* 一般平日：不顯示 */
       hint.hidden = true;
       return;
     }
 
     textEl.textContent = text;
-    btn.textContent = action === 'auto' ? '恢復自動'
-      : (action === 'toWorkday' ? '改回平日' : '改回假日');
+    btn.textContent = action === 'auto' ? T('dayhint.actionAuto')
+      : (action === 'toWorkday' ? T('dayhint.actionToWorkday') : T('dayhint.actionToHoliday'));
     btn.setAttribute('data-dayhint-action', action);
     hint.hidden = false;
   }
@@ -455,7 +556,7 @@
     if (themeIconUse) themeIconUse.setAttribute('href', dark ? '#i-sun' : '#i-moon');
     if (themeBtn) {
       themeBtn.setAttribute('aria-pressed', dark ? 'true' : 'false');
-      themeBtn.setAttribute('aria-label', dark ? '切換淺色模式' : '切換深色模式');
+      themeBtn.setAttribute('aria-label', dark ? T('theme.toLight') : T('theme.toDark'));
     }
     /* theme-color 交由各版本 HTML 內的兩組 meta（light / dark media query）決定，
        不在這裡覆寫 —— 三個版本共用同一支 JS，硬寫色值會把彼此的配色蓋掉。 */
@@ -641,11 +742,11 @@
 
     if (countEl) {
       var baseCount = state.upcomingOnly
-        ? '剩 ' + display.length + ' / 共 ' + rows.length + ' 班'
-        : '共 ' + rows.length + ' 班';
+        ? T('board.countPrefix') + display.length + ' / ' + rows.length + T('board.countSuffix')
+        : T('board.countPrefix') + rows.length + T('board.countSuffix');
       /* 44 班裡有 36 班停駛卻只寫「共 44 班」，等於告訴使用者今天車很多。
          把停駛數直接寫進這一行 —— 這是他掃一眼就會看到的數字。 */
-      countEl.textContent = suspCount ? baseCount + ' · ' + suspCount + ' 班停駛' : baseCount;
+      countEl.textContent = suspCount ? baseCount + ' · ' + suspCount + T('board.suspended') : baseCount;
     }
 
     /* 只有「畫面上真的會變」時才重建 DOM：避免每 30 秒整份 innerHTML 重繪造成
@@ -664,10 +765,10 @@
         var noMoreRunning = rows.length > 0 && upcoming.length === 0;
         var et = emptyEl.querySelector('.empty__title');
         var ed = emptyEl.querySelector('.empty__desc');
-        if (et) et.textContent = noMoreRunning ? '今日班次已全部停駛' : '沒有符合條件的班次';
+        if (et) et.textContent = noMoreRunning ? T('board.allSuspended') : T('board.empty.title');
         if (ed) ed.textContent = noMoreRunning
-          ? '颱風日班表：接下來已無行駛班次，請留意社區公告或改搭其他運輸工具。'
-          : '試著切換「假日」、改用其他路線篩選，或關閉「只看接下來」。';
+          ? T('board.empty.typhoon')
+          : T('board.empty.desc');
         emptyEl.hidden = false;
       }
       return;
@@ -696,19 +797,29 @@
       var cls = 'dep' + (susp ? ' is-susp' : '') + (isNext ? ' is-next' : '') +
         (isPast ? ' is-past' : '') + (hourStart ? ' is-hour-start' : '');
       var spoken = t + '，' + route + '，' +
-        (susp ? '停駛' : p.from + (p.to ? '往' + p.to.replace(/^往/, '') : '') + '，' + spokenRel);
+        (susp ? T('dest.suspended')
+              : P(p.from) + (p.to ? T('dest.to') + termText(p.to).replace(/^往/, '') : '') + '，' + spokenRel);
 
-      return '<div class="' + cls + '" role="listitem" data-route="' + routeKey(route) + '" data-hour="' + hour + '">' +
+      /* 終站標籤 .dep__term —— 本次修正的核心。
+         原本 <520px 時 .dep__dest 被 display:none，手機完全看不到「南港火車站 / 東湖捷運站」
+         的差別。這裡另起一個只放終站的短標籤，所有斷點都顯示，含顏色代碼 data-term。 */
+      var termHtml = (susp || !p.to) ? '' :
+        '<span class="dep__term" aria-hidden="true" data-term="' + termKey(p.to) + '">' +
+          '<span class="dep__termArrow">→</span>' + escapeHtml(termText(p.to)) +
+        '</span>';
+
+      return '<div class="' + cls + '" role="listitem" data-route="' + routeKey(route) + '" data-hour="' + hour + '" data-term="' + termKey(p.to || '') + '">' +
         '<span class="sr-only">' + escapeHtml(spoken) + '</span>' +
         '<span class="dep__hour" aria-hidden="true">' + hour + '</span>' +
         '<span class="dep__time" aria-hidden="true"><span class="hh">' + t.slice(0, 2) + '</span>' +
           '<span class="cc">:</span><span class="mm">' + t.slice(3, 5) + '</span></span>' +
-        '<span class="dep__route" aria-hidden="true">' + escapeHtml(route) + '</span>' +
+        '<span class="dep__route" aria-hidden="true">' + escapeHtml(I18N && I18N.routeLabel ? I18N.routeLabel(route) : route) + '</span>' +
         '<span class="dep__dest' + (showFrom ? '' : ' dep__dest--cont') + '" aria-hidden="true">' +
           (susp ? '' :
-            (showFrom ? '<span class="dep__from">' + escapeHtml(p.from) + '</span>' : '') +
-            (p.to ? '<span class="dep__sep">→</span><span class="dep__to">' + escapeHtml(p.to) + '</span>' : '')) +
+            (showFrom ? '<span class="dep__from">' + escapeHtml(P(p.from)) + '</span>' : '') +
+            (p.to ? '<span class="dep__sep">→</span><span class="dep__to">' + escapeHtml(P(p.to)) + '</span>' : '')) +
         '</span>' +
+        termHtml +
         /* 停駛用「剩餘」欄承載：那一欄在每一個斷點都存在（手機在 grid 第 3 欄），
            而「剩餘 3 分」對一班不開的車本來就沒有意義。
            這樣不必新增 grid 欄位、不必動任何版面骨架，手機與桌機都看得到。 */
@@ -1608,7 +1719,104 @@
     }
   }
 
+  /* ---------------------------------------------------------------------
+     靜態文字國際化
+     ---------------------------------------------------------------------
+     index.html 裡帶 data-i18n="key" 的元素，textContent 會被換成 t(key)。
+     data-i18n-attr="aria-label:key" 可換屬性；data-i18n-html 用 innerHTML（僅限
+     自家字典字串，不含使用者輸入，所以安全）。
+     這樣做而不是把整段 HTML 交給 JS 產生 —— 保留原本的可讀性與 DOM 結構。 */
+  function applyStaticI18n() {
+    var nodes = document.querySelectorAll('[data-i18n]');
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      var key = el.getAttribute('data-i18n');
+      if (!key) continue;
+      var val = T(key);
+      if (typeof val !== 'string') continue;
+      if (el.hasAttribute('data-i18n-html')) el.innerHTML = val;
+      else el.textContent = val;
+    }
+    /* 屬性型（aria-label / placeholder / title / alt） */
+    var attrs = document.querySelectorAll('[data-i18n-attr]');
+    for (var j = 0; j < attrs.length; j++) {
+      var a = attrs[j];
+      var spec = a.getAttribute('data-i18n-attr');
+      if (!spec) continue;
+      var parts = spec.split(';');
+      for (var k = 0; k < parts.length; k++) {
+        var pair = parts[k].split(':');
+        if (pair.length < 2) continue;
+        var attrName = pair[0].trim();
+        var attrKey = pair[1].trim();
+        var av = T(attrKey);
+        if (typeof av === 'string') a.setAttribute(attrName, av);
+      }
+    }
+    /* 標籤上另有一段「品牌副標」：中文模式顯示英文、英文模式顯示中文，
+       讓兩種住戶都能對照。 */
+    var sub = document.querySelectorAll('[data-brand-sub]');
+    for (var s = 0; s < sub.length; s++) {
+      sub[s].textContent = T(isEn() ? 'brand.en' : 'brand.en');
+    }
+  }
+
+  /* 語言切換後：不用重新整理，就地重繪所有動態內容 */
+  var LANG_KEY = 'lhbs_lang';
+
+  function relocalize() {
+    applyStaticI18n();
+    /* 動態區塊 */
+    var mDep = document.getElementById('metaDepartures');
+    if (mDep) {
+      var b = departureBreakdown();
+      mDep.textContent = totalDepartures() + ' ' + (isEn() ? 'trips' : '筆') +
+        ' (' + T('day.workday') + ' ' + b.workday + ' · ' + T('day.holiday') + ' ' + b.holiday + ')';
+    }
+    var mSec = document.getElementById('metaSections');
+    if (mSec) mSec.textContent = DATA.sections.length + (isEn() ? ' segments / ' : ' 段 / ') + totalStops() + T('misc.stops');
+    if (typeof renderPhones === 'function') renderPhones();
+    if (typeof applyPhoneSearch === 'function') applyPhoneSearch();
+    if (typeof buildStops === 'function') buildStops();
+    renderDayHint();
+    renderHero();
+    renderSchedule(true);
+    if (typeof renderTdxStatus === 'function') renderTdxStatus();
+    /* 語言鈕自身狀態 */
+    updateLangBtn();
+  }
+
+  function updateLangBtn() {
+    var btn = document.getElementById('langBtn');
+    if (!btn) return;
+    var cur = document.getElementById('langCur');
+    var other = document.getElementById('langOther');
+    /* 鈕上顯示「目前語言 / 另一語言」，例如「中 / EN」。
+       aria-label 說清楚按下去會切到哪一種。 */
+    if (cur) cur.textContent = isEn() ? 'EN' : '中';
+    if (other) other.textContent = isEn() ? '中' : 'EN';
+    btn.setAttribute('aria-label', T('lang.toggleAria'));
+    btn.setAttribute('lang', isEn() ? 'en' : 'zh-Hant-TW');
+  }
+
+  function initLangToggle() {
+    var btn = document.getElementById('langBtn');
+    if (!btn || !I18N) return;
+    updateLangBtn();
+    btn.addEventListener('click', function () {
+      I18N.toggle();
+      relocalize();
+    });
+    document.addEventListener('lhbs:langchange', function () {
+      updateLangBtn();
+    });
+  }
+
   function init() {
+    /* i18n 必須最先跑：後面所有 render 都會用 T() 取字串。
+       順序：套靜態文字 → 語言鈕 → 才開始畫動態內容。 */
+    if (I18N) { applyStaticI18n(); initLangToggle(); }
+
     var mDep = document.getElementById('metaDepartures');
     if (mDep) {
       var b = departureBreakdown();

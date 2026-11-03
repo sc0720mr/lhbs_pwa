@@ -1736,3 +1736,283 @@ a.ph:focus-visible .ph__call { opacity: 1; color: var(--green-deep); }
 
 /* 日期那一列允許換行，讓提示列獨占第二行（見 .dayhint 的 flex-basis:100%） */
 .ctrl--day { flex-wrap: wrap; }
+/* ==========================================================================
+   v4.0.0 追加樣式（i18n 語言鈕 + 終站標籤）
+   直接附加在 style.css 末端；維持單一 CSS 檔，不新增請求。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 語言切換鈕（.langbtn）
+   --------------------------------------------------------------------------
+   尺寸策略：視覺 42px 高（跟其他 iconbtn 一致），用 ::after 往外擴 1px→44px，
+   不改變視覺高度。寬度用 auto 容納「中 / EN」三字。
+   -------------------------------------------------------------------------- */
+.langbtn {
+  width: auto;
+  min-width: 44px;
+  padding: 0 9px;
+  gap: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  /* 父層 .iconbtn 是 display:grid，三個 span 會被排成三列（中／／／EN 上下疊），
+     高度 40px 撐不住就溢出到標題列外。這裡必須改成 flex 橫排。 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  line-height: 1;
+}
+.langbtn #langCur { color: var(--on-shell, currentColor); }
+/* 原本用 opacity:.5 淡化「另一語言」，但在深色標題列上實測對比僅約 3:1（低於 WCAG AA 的
+   4.5:1），而且半透明會讓 12px 小字看起來糊成一團、像溢出容器。
+   改用固定的 rgba 文字色 —— 對比拉高到約 7:1，視覺上仍然弱於目前語言，層級不變。 */
+.langbtn #langOther { opacity: 1; color: rgba(255, 255, 255, .72); }
+.langbtn__sep { opacity: 1; color: rgba(255, 255, 255, .38); padding: 0 1px; }
+/* 給按鈕一個極淡底框，讓它看起來是可以按的（其他 iconbtn 是靠 icon 形狀辨識，
+   文字鈕沒有形狀，需要背景才不會被誤認成標題的一部分） */
+.langbtn {
+  background: rgba(255, 255, 255, .10);
+}
+.langbtn:hover {
+  background: rgba(255, 255, 255, .18);
+}
+
+/* --------------------------------------------------------------------------
+   語言鈕佔位後的品牌讓步（<420px）
+   --------------------------------------------------------------------------
+   問題：加了「中 / EN」按鈕（59px + 4px gap）後，390px 機身的品牌文字只剩
+   125px，但「水蓮車班時刻表」需要 151px、「Lotus Hill Bus Schedule」需要 195px，
+   於是標題被裁掉（實測 scrollWidth 151 > width 125）。
+   解法：手機上把 mark／字級縮一級，並允許標題在必要時縮字級。
+   目標是「兩種語言都不被裁切」，不是把文字硬塞。
+   -------------------------------------------------------------------------- */
+@media (max-width: 419px) {
+  .brand {
+    gap: 10px;
+    /* 品牌連結縮小後高度掉到 38px（< 44px）。用 min-height 補回命中區，
+       視覺上因為圖示本來就 38px、標題列 69px 高，看不出變化。 */
+    min-height: 44px;
+  }
+  .brand__mark { width: 38px; height: 38px; }
+  .brand__zh { font-size: 17px; letter-spacing: -.01em; }
+  .brand__en { font-size: 9.5px; letter-spacing: .06em; }
+  .mast__inner { gap: 8px; padding: 0 12px; }
+  .mast__actions { gap: 2px; }
+  .iconbtn { width: 38px; height: 38px; }
+  .langbtn { min-width: 44px; padding: 0 7px; font-size: 11.5px; }
+}
+/* 英文標題最長（"Lotus Hill Bus Schedule"），再收一級 */
+html[lang="en"] .brand__zh { font-size: 15.5px; letter-spacing: -.015em; }
+html[lang="en"] .brand__en { font-size: 9px; letter-spacing: .04em; }
+/* 把命中區補到 ≥44px（視覺不變） */
+.langbtn::after {
+  content: '';
+  position: absolute;
+  inset: -1px -1px;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* --------------------------------------------------------------------------
+   2. 終站標籤（.dep__term）
+   --------------------------------------------------------------------------
+   存在理由：原本 <520px 時 .dep__dest 是 display:none，手機完全看不到
+   「南港火車站 / 東湖捷運站」的差別。這個標籤只放終站、不含起點，
+   所以文字短，390px 也塞得下。
+
+   顏色代碼（data-term）讓住戶一眼分辨：
+     nangang  南港火車站 —— 朱紅（主要轉乘點，台鐵）
+     donghu   東湖捷運站 —— 藍（捷運）
+     cathay   國泰醫院   —— 綠
+     xihu     汐湖橋口   —— 琥珀
+     zhong3   忠三街口   —— 紫
+     lotus    水蓮       —— 灰（回程常用，低調）
+     other    其他       —— 灰
+   顏色僅為輔助；文字本身已經寫明終站，色盲使用者不受影響。
+   -------------------------------------------------------------------------- */
+.dep__term {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  color: var(--ink-2, #5c6670);
+}
+.dep__termArrow { opacity: .55; font-size: 10px; }
+
+/* 終站色碼 */
+.dep__term[data-term="nangang"] {
+  color: #C0392B;
+  background: color-mix(in srgb, #C0392B 9%, transparent);
+  border-color: color-mix(in srgb, #C0392B 28%, transparent);
+}
+.dep__term[data-term="donghu"] {
+  color: #1E6FA8;
+  background: color-mix(in srgb, #1E6FA8 9%, transparent);
+  border-color: color-mix(in srgb, #1E6FA8 28%, transparent);
+}
+.dep__term[data-term="cathay"] {
+  color: #1F7A4D;
+  background: color-mix(in srgb, #1F7A4D 9%, transparent);
+  border-color: color-mix(in srgb, #1F7A4D 28%, transparent);
+}
+.dep__term[data-term="xihu"] {
+  color: #8A6100;
+  background: color-mix(in srgb, #8A6100 10%, transparent);
+  border-color: color-mix(in srgb, #8A6100 28%, transparent);
+}
+.dep__term[data-term="zhong3"] {
+  color: #6B3FA0;
+  background: color-mix(in srgb, #6B3FA0 9%, transparent);
+  border-color: color-mix(in srgb, #6B3FA0 28%, transparent);
+}
+.dep__term[data-term="lotus"],
+.dep__term[data-term="other"],
+.dep__term[data-term="none"] {
+  color: var(--ink-2, #5c6670);
+}
+
+/* 停駛的列不需要終站標籤（JS 已不輸出，這裡再加一層保險） */
+.dep.is-susp .dep__term { display: none; }
+
+/* 深色模式：提高亮度，維持 AA 對比 */
+[data-theme="dark"] .dep__term { color: var(--ink-2, #A8B3BD); }
+[data-theme="dark"] .dep__term[data-term="nangang"] { color: #FF8A7A; background: rgba(255,138,122,.14); border-color: rgba(255,138,122,.34); }
+[data-theme="dark"] .dep__term[data-term="donghu"]  { color: #78BBEC; background: rgba(120,187,236,.14); border-color: rgba(120,187,236,.34); }
+[data-theme="dark"] .dep__term[data-term="cathay"]  { color: #6FD6A0; background: rgba(111,214,160,.14); border-color: rgba(111,214,160,.34); }
+[data-theme="dark"] .dep__term[data-term="xihu"]    { color: #E8BE5C; background: rgba(232,190,92,.14); border-color: rgba(232,190,92,.34); }
+[data-theme="dark"] .dep__term[data-term="zhong3"]  { color: #BFA0EA; background: rgba(191,160,234,.14); border-color: rgba(191,160,234,.34); }
+
+/* --------------------------------------------------------------------------
+   3. 手機（<520px）：改 4 欄，讓終站標籤有位置
+   --------------------------------------------------------------------------
+   原本：  [時間] [路線] [剩餘]              （終站整個隱藏）
+   現在：  [時間] [路線] [終站] [剩餘]
+   「剩餘」固定 56px 不縮；終站標籤可縮並用 ellipsis，不換行也不溢出。
+   -------------------------------------------------------------------------- */
+@media (max-width: 519px) {
+  .dep,
+  .thead {
+    grid-template-columns: 58px minmax(0, 1fr) auto 54px;
+  }
+  /* 用 grid-area 明確指定，避免依賴 DOM 順序（終站標籤插在 .dep__dest 之後） */
+  .dep__hour { display: none; }
+  .dep__time { grid-column: 1; }
+  .dep__route { grid-column: 2; }
+  .dep__dest { display: none; }             /* 完整起訖仍隱藏（太長） */
+  .dep__term { grid-column: 3; justify-self: end; }
+  .dep__rel  { grid-column: 4; }
+
+  /* 表頭四欄：發車 / 路線 / 起訖 / 剩餘（起訖欄在手機顯示「終站」概念） */
+  .thead span:nth-child(1) { display: none; }
+  .thead span:nth-child(2) { grid-column: 1; }
+  .thead span:nth-child(3) { grid-column: 2; }
+  .thead span:nth-child(4) { display: block; grid-column: 3; text-align: right; }
+  .thead span:nth-child(5) { grid-column: 4; text-align: right; }
+
+  /* 沒有終站標籤的列（停駛）不要把「剩餘」推走 */
+  .dep.is-susp .dep__rel { grid-column: 4; }
+}
+
+/* 360px 這種窄機再收一點，避免標籤文字擠壓路線欄 */
+@media (max-width: 359px) {
+  .dep__term {
+    max-width: 78px;
+    font-size: 10px;
+    padding: 1px 4px;
+    white-space: normal;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. 英文模式：字串普遍比中文長 30~60%，需要額外讓步
+   --------------------------------------------------------------------------
+   用 html[lang="en"] 而不是 JS 切 class —— lang 屬性本來就會隨語言更新，
+   省一次 DOM 操作，也讓 CSS 與 i18n 狀態天然同步。
+   -------------------------------------------------------------------------- */
+html[lang="en"] .seg button {
+  /* 「Weekend/Holiday」比「假日」長很多；允許縮字級而不是撐破容器 */
+  font-size: 13px;
+  letter-spacing: -.01em;
+  padding: 0 10px;
+}
+html[lang="en"] .chip {
+  font-size: 12.5px;
+  padding: 0 11px;
+  /* 「All」只有三個字母，padding 一收就掉到 40px —— 用 min-width 強制不縮到 44px 以下 */
+  min-width: 46px;
+  justify-content: center;
+}
+html[lang="en"] .ctrl__label {
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  font-size: 10.5px;
+}
+html[lang="en"] .dayhint {
+  /* 英文提示句更長，手機允許兩行 */
+  line-height: 1.45;
+}
+html[lang="en"] .dayhint__text { font-size: 11.5px; }
+html[lang="en"] .dayhint__btn { font-size: 11.5px; }
+
+/* 英文模式的班次列：路線名變成「Bus 591」「Shuttle」，需要更多寬度 */
+@media (max-width: 519px) {
+  html[lang="en"] .dep,
+  html[lang="en"] .thead {
+    grid-template-columns: 58px minmax(0, 1fr) auto 52px;
+  }
+  html[lang="en"] .dep__route { font-size: 11.5px; }
+  html[lang="en"] .dep__term {
+    font-size: 10px;
+    /* 390px 機身：留給「剩餘」欄 52px，標籤可容約 104px 並換成兩行 */
+    max-width: 104px;
+    padding: 1px 5px;
+    white-space: normal;
+  }
+}
+
+/* 英文模式的終站標籤：英文比中文長很多（「Nangang Railway Station」21 字元），
+   原本 nowrap + ellipsis 會被截成「→ Nangang Railwa...」，使用者看不到站名結尾。
+   改為允許換行、不截斷 —— 班次列高度會多 14px，但資訊完整。 */
+html[lang="en"] .dep__term {
+  white-space: normal;
+  text-overflow: clip;
+  line-height: 1.25;
+  text-align: right;
+  justify-content: flex-end;
+  overflow: visible;
+}
+
+/* 英文模式：Hero 的起訖雙語會變長，允許換行不截斷 */
+html[lang="en"] .hero__dest {
+  white-space: normal;
+  line-height: 1.4;
+}
+
+/* 英文模式：底部導覽四字標籤（Schedule / Stops / Phone / About） */
+html[lang="en"] .tab { font-size: 10.5px; letter-spacing: .01em; }
+@media (min-width: 760px) {
+  html[lang="en"] .tab { font-size: 13px; }
+}
+
+/* --------------------------------------------------------------------------
+   5. 無障礙：focus 樣式（語言鈕與提示連結都要鍵盤可達）
+   -------------------------------------------------------------------------- */
+.langbtn:focus-visible,
+.dayhint__btn:focus-visible {
+  outline: 2px solid var(--green, #1F7A4D);
+  outline-offset: 2px;
+}

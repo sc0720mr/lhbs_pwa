@@ -76,25 +76,25 @@ window.LHBS_CALENDAR = {
 
   /* 放假的日子（週間國定假日與補假）。週末不列，由週末規則處理。 */
   holidays: [
-    { date: '2026-01-01', name: '元旦' },
+    { date: '2026-01-01', name: '元旦', nameEn: 'New Year\'s Day' },
 
     /* 農曆春節（2/14 六 ~ 2/22 日，共 9 天） */
-    { date: '2026-02-16', name: '除夕' },
-    { date: '2026-02-17', name: '春節' },
-    { date: '2026-02-18', name: '春節' },
-    { date: '2026-02-19', name: '春節' },
-    { date: '2026-02-20', name: '小年夜逢例假日補放假' },
+    { date: '2026-02-16', name: '除夕', nameEn: 'Chinese New Year\'s Eve' },
+    { date: '2026-02-17', name: '春節', nameEn: 'Lunar New Year' },
+    { date: '2026-02-18', name: '春節', nameEn: 'Lunar New Year' },
+    { date: '2026-02-19', name: '春節', nameEn: 'Lunar New Year' },
+    { date: '2026-02-20', name: '小年夜逢例假日補放假', nameEn: 'Lunar New Year holiday (observed)' },
 
-    { date: '2026-02-27', name: '和平紀念日補假' },
-    { date: '2026-04-03', name: '兒童節補假' },
-    { date: '2026-04-06', name: '清明節補假' },
-    { date: '2026-05-01', name: '勞動節' },
-    { date: '2026-06-19', name: '端午節' },
-    { date: '2026-09-25', name: '中秋節' },
-    { date: '2026-09-28', name: '教師節' },
-    { date: '2026-10-09', name: '國慶日補假' },
-    { date: '2026-10-26', name: '光復節補假' },
-    { date: '2026-12-25', name: '行憲紀念日' }
+    { date: '2026-02-27', name: '和平紀念日補假', nameEn: 'Peace Memorial Day (observed)' },
+    { date: '2026-04-03', name: '兒童節補假', nameEn: 'Children\'s Day (observed)' },
+    { date: '2026-04-06', name: '清明節補假', nameEn: 'Tomb Sweeping Day (observed)' },
+    { date: '2026-05-01', name: '勞動節', nameEn: 'Labour Day' },
+    { date: '2026-06-19', name: '端午節', nameEn: 'Dragon Boat Festival' },
+    { date: '2026-09-25', name: '中秋節', nameEn: 'Mid-Autumn Festival' },
+    { date: '2026-09-28', name: '教師節', nameEn: 'Teachers\' Day' },
+    { date: '2026-10-09', name: '國慶日補假', nameEn: 'National Day (observed)' },
+    { date: '2026-10-26', name: '光復節補假', nameEn: 'Retrocession Day (observed)' },
+    { date: '2026-12-25', name: '行憲紀念日', nameEn: 'Constitution Day' }
   ],
 
   /* 補班日（週六日但要上班）。

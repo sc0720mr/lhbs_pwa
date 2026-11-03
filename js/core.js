@@ -23,7 +23,7 @@
        3) <meta name="app-version"> 與 <meta name="app-cache-version">
      三者不一致，就代表檔案沒蓋好或快取還在供應舊版。
      --------------------------------------------------------------------- */
-  var BUILD = 'LHBS build 6.6.1 / cache v43';
+  var BUILD = 'LHBS build 6.6.2 / cache v44';
   try {
     console.log('%c' + BUILD, 'background:#08B898;color:#04231C;font-weight:700;padding:3px 8px;border-radius:2px');
   } catch (e) { /* console 不可用時忽略 */ }
@@ -245,6 +245,52 @@
     if (!t) return '';
     if (!isEn()) return t;
     return (I18N && I18N.properEn) ? I18N.properEn(t) : t;
+  }
+
+  /* ----------------------------------------------------------------
+     6.6.2：去程標終點、回程標出發站點
+     ----------------------------------------------------------------
+     需求來自使用者實地觀察：「回程的重點是『我要去哪裡等車』」。
+
+     但資料比這句話複雜一層，先講清楚（實測 data.js 的結果）：
+
+       平日去程 66 班   起點 水蓮 55 / 國泰醫院 11   終點 東湖38 南港17 汐湖6 忠三5
+       平日回程 66 班   起點 東湖38 南港17 汐湖6 忠三5  終點 水蓮 55 / 國泰醫院 11
+       假日去程 43 班   起點 水蓮 32 / 國泰醫院 11   終點 南港25 東湖7 汐湖6 忠三5
+       假日回程 43 班   起點 南港25 東湖7 汐湖6 忠三5   終點 水蓮 32 / 國泰醫院 11
+
+     → 「回程終點一定是水蓮」對社巴與 591 成立，但 F913／F913 延 的 11 班
+       回程終點是「國泰醫院」，不是水蓮。所以標籤只寫「水蓮」會把這 11 班講錯。
+
+     → 因此回程標籤顯示「出發站點」，並在國泰醫院終點的回程班次上補一個
+       極小的終點提示，避免使用者以為所有回程都回水蓮。
+
+     為什麼不做「起點 → 終點」兩站全寫：英文模式下 "Nangang Railway Station →
+     Lotus Hill" 在 390px 會換成三行，把 43 列拉成 43 個三行區塊，反而看不清楚。
+     標「會變的那一站」+ 少數例外補註，資訊量足夠且版面穩定。
+     ---------------------------------------------------------------- */
+
+  /* 回程時要標的出發站點（= p.from）。去程時要標的終點（= p.to）。 */
+  function focusStation(p, dir) {
+    if (!p) return '';
+    if (dir === 'from') return p.from ? stripTo(p.from) : '';
+    return p.to ? stripTo(p.to) : '';
+  }
+  function focusText(p, dir) {
+    var raw = focusStation(p, dir);
+    if (!raw) return '';
+    if (!isEn()) return raw;
+    return (I18N && I18N.properEn) ? I18N.properEn(raw) : raw;
+  }
+
+  /* 回程的例外：終點不是水蓮的班次（F913／F913 延 → 國泰醫院）。
+     只有「回程且終點不是水蓮」時才回傳終點字串，其餘回空字串。 */
+  function returnException(p) {
+    if (!p || !p.to) return '';
+    var to = stripTo(p.to);
+    if (!to) return '';
+    if (to.indexOf('水蓮') !== -1) return '';   /* 一般回程：靜默 */
+    return to;
   }
 
   function relativeText(diffMin) {
@@ -814,15 +860,25 @@
         (susp ? T('dest.suspended')
               : P(p.from) + (p.to ? ' ' + T('dest.to') + ' ' + termText(p.to) : '') + '，' + spokenRel);
 
-      /* 終站標籤 .dep__term —— 本次修正的核心。
-         原本 <520px 時 .dep__dest 被 display:none，手機完全看不到「南港火車站 / 東湖捷運站」
-         的差別。這裡另起一個只放終站的短標籤，所有斷點都顯示，含顏色代碼 data-term。 */
-      var termHtml = (susp || !p.to) ? '' :
-        '<span class="dep__term" aria-hidden="true" data-term="' + termKey(p.to) + '">' +
-          '<span class="dep__termArrow">→</span>' + escapeHtml(termText(p.to)) +
+      /* 標籤 .dep__term ── 6.6.2 起「標會變的那一站」：
+           去程（dir='to'）  → 終點（南港／東湖／汐湖橋口／忠三街口）
+           回程（dir='from'）→ 出發站點（同樣四選一），因為使用者要知道去哪等車
+         回程若終點不是水蓮（F913／F913 延 → 國泰醫院，共 11 班），
+         額外在箭頭後補一個小字終點，避免誤以為每班回程都回水蓮。 */
+      var isReturn = state.dir === 'from';
+      var fStation = susp ? '' : focusStation(p, state.dir);
+      var fText = fStation ? focusText(p, state.dir) : '';
+      var exTo = (isReturn && !susp) ? returnException(p) : '';
+      var exText = exTo ? termText(exTo) : '';
+      var termHtml = !fText ? '' :
+        '<span class="dep__term' + (isReturn ? ' dep__term--origin' : '') + '"' +
+            ' aria-hidden="true" data-term="' + termKey(fStation) + '">' +
+          '<span class="dep__termArrow">' + (isReturn ? '\u25B8' : '\u2192') + '</span>' +
+          escapeHtml(fText) +
+          (exText ? '<span class="dep__termVia">\u2192' + escapeHtml(exText) + '</span>' : '') +
         '</span>';
 
-      return '<div class="' + cls + '" role="listitem" data-route="' + routeKey(route) + '" data-hour="' + hour + '" data-term="' + termKey(p.to || '') + '">' +
+      return '<div class="' + cls + '" role="listitem" data-route="' + routeKey(route) + '" data-hour="' + hour + '" data-term="' + termKey(fStation || '') + '">' +
         '<span class="sr-only">' + escapeHtml(spoken) + '</span>' +
         '<span class="dep__hour" aria-hidden="true">' + hour + '</span>' +
         '<span class="dep__time" aria-hidden="true"><span class="hh">' + t.slice(0, 2) + '</span>' +
@@ -934,6 +990,17 @@
   }
 
   /* 分段控制 */
+  /* 表頭第 4 欄：去程標題用「終點」、回程用「出發站」。
+     原本固定寫「起訖」，但手機與改版後這一欄只放「會變的那一站」
+     （去程＝終點、回程＝出發站），標「起訖」會讓人以為兩站都在裡面。
+     HTML 上的 span 帶 data-i18n，applyStaticI18n 會把它蓋成 board.col.dest，
+     所以這裡在每次套用靜態字串之後、以及切換方向時都要再覆寫一次。 */
+  function updateDestColumnLabel() {
+    var el = document.getElementById('thDestCol');
+    if (!el) return;
+    el.textContent = T(state.dir === 'from' ? 'board.col.destFrom' : 'board.col.destTo');
+  }
+
   function bindSegmented(id, key, attr) {
     var group = document.getElementById(id);
     if (!group) return;
@@ -944,6 +1011,7 @@
       $$('button', group).forEach(function (b) {
         b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
       });
+      if (key === 'dir') updateDestColumnLabel();
       refreshScheduleViews();
     });
   }
@@ -1829,6 +1897,7 @@
 
   function relocalize() {
     applyStaticI18n();
+    updateDestColumnLabel();
     /* 動態區塊 */
     var mDep = document.getElementById('metaDepartures');
     if (mDep) {
@@ -1881,7 +1950,7 @@
   function init() {
     /* i18n 必須最先跑：後面所有 render 都會用 T() 取字串。
        順序：套靜態文字 → 語言鈕 → 才開始畫動態內容。 */
-    if (I18N) { applyStaticI18n(); initLangToggle(); }
+    if (I18N) { applyStaticI18n(); updateDestColumnLabel(); initLangToggle(); }
 
     var mDep = document.getElementById('metaDepartures');
     if (mDep) {

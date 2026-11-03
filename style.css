@@ -1808,11 +1808,14 @@ a.ph:focus-visible .ph__call { opacity: 1; color: var(--green-deep); }
 /* 英文標題最長（"Lotus Hill Bus Schedule"），再收一級 */
 html[lang="en"] .brand__zh { font-size: 15.5px; letter-spacing: -.015em; }
 html[lang="en"] .brand__en { font-size: 9px; letter-spacing: .04em; }
-/* 把命中區補到 ≥44px（視覺不變） */
+/* 把命中區補到 ≥44px（視覺不變）。
+   原本 inset:-1px 只能把 40px 擴到 42px，實測仍不足 44px。
+   改為垂直 ±3px 後 40+6=46px；<419px 時 iconbtn 縮到 38px，38+6=44px 剛好達標。
+   min-height/min-width 44 為保險，避免各瀏覽器 inset 算得不同。 */
 .langbtn::after {
   content: '';
   position: absolute;
-  inset: -1px -1px;
+  inset: -3px -1px;
   min-height: 44px;
   min-width: 44px;
 }
@@ -1851,7 +1854,22 @@ html[lang="en"] .brand__en { font-size: 9px; letter-spacing: .04em; }
   border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
   color: var(--ink-2, #5c6670);
 }
-.dep__termArrow { opacity: .55; font-size: 10px; }
+.dep__termArrow { opacity: .7; font-size: 11px; flex: none; }
+
+/* 回程（6.6.2）：標籤裡放的是「出發站點」，用實框與 ▸ 與去程的「終點」區隔。
+   只有框線不同、寬度與高度完全不變 —— 43 列不會因為方向切換而位移。 */
+.dep__term--origin {
+  border-style: solid;
+}
+
+/* 回程例外（F913／F913 延 → 國泰醫院）：在出發站後面補一個小字終點。
+   只在 11 班出現，其餘回程不渲染這個 span。 */
+.dep__termVia {
+  opacity: .75;
+  font-weight: 500;
+  font-size: 10px;
+  margin-left: 1px;
+}
 
 /* 終站色碼 */
 .dep__term[data-term="nangang"] {

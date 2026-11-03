@@ -34,17 +34,17 @@
      Android 狀態列會出現一道色差色帶。 -->
 <meta name="theme-color" content="#0B0E13" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F6F7F9" media="(prefers-color-scheme: light)">
-<meta name="app-version" content="6.6.1">
-<meta name="app-cache-version" content="v43">
+<meta name="app-version" content="6.6.2">
+<meta name="app-cache-version" content="v44">
 <meta name="format-detection" content="telephone=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="水蓮車班時刻表">
-<link rel="manifest" href="manifest.json?v=6.6.1">
+<link rel="manifest" href="manifest.json?v=6.6.2">
 <link rel="icon" type="image/png" sizes="32x32" href="icon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon/icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon-180x180.png">
-<link rel="stylesheet" href="style.css?v=6.6.1">
+<link rel="stylesheet" href="style.css?v=6.6.2">
 <!-- 觸控命中區補丁（6.4.0）
      style.css 的「觸控命中區」區塊已把 .chip / .seg button / .iconbtn 等
      用透明 ::after 往外擴到 44px，但 .iconbtn--sm 只有 32×32，
@@ -226,7 +226,7 @@
           <span class="board__count" id="scheduleCount"></span>
         </div>
         <div class="thead" aria-hidden="true">
-          <span data-i18n="board.col.hour">時</span><span data-i18n="board.col.time">發車</span><span data-i18n="board.col.route">路線</span><span data-i18n="board.col.dest">起訖</span><span data-i18n="board.col.rel">剩餘</span>
+          <span data-i18n="board.col.hour">時</span><span data-i18n="board.col.time">發車</span><span data-i18n="board.col.route">路線</span><span data-i18n="board.col.dest" id="thDestCol">起訖</span><span data-i18n="board.col.rel">剩餘</span>
         </div>
         <div class="deps" id="scheduleList" role="list" aria-labelledby="scheduleTitle"></div>
         <div class="empty" id="scheduleEmpty" hidden>
@@ -387,10 +387,10 @@
       <div class="slider" id="iosSlider" data-slider="ios">
         <div class="slider__frame">
           <div class="slider__track" id="iosViewport">
-            <div class="slide"><img src="images/ios_step1.webp?v=6.6.1" alt="iPhone 安裝步驟 1：以 Safari 開啟時刻表" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/ios_step2.webp?v=6.6.1" alt="iPhone 安裝步驟 2：點選底部分享按鈕" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/ios_step3.webp?v=6.6.1" alt="iPhone 安裝步驟 3：選擇加入主畫面" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/ios_step4.webp?v=6.6.1" alt="iPhone 安裝步驟 4：命名後新增" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/ios_step1.webp?v=6.6.2" alt="iPhone 安裝步驟 1：以 Safari 開啟時刻表" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/ios_step2.webp?v=6.6.2" alt="iPhone 安裝步驟 2：點選底部分享按鈕" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/ios_step3.webp?v=6.6.2" alt="iPhone 安裝步驟 3：選擇加入主畫面" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/ios_step4.webp?v=6.6.2" alt="iPhone 安裝步驟 4：命名後新增" width="480" height="1419" loading="lazy" decoding="async" draggable="false"></div>
           </div>
         </div>
         <div class="slider__nav">
@@ -409,12 +409,12 @@
       <div class="slider" id="androidSlider" data-slider="android">
         <div class="slider__frame">
           <div class="slider__track" id="androidViewport">
-            <div class="slide"><img src="images/android_step1.webp?v=6.6.1" alt="Android 安裝步驟 1：以 Chrome 開啟時刻表" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/android_step2.webp?v=6.6.1" alt="Android 安裝步驟 2：開啟右上角更多選單" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/android_step3.webp?v=6.6.1" alt="Android 安裝步驟 3：選擇安裝應用程式" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/android_step4.webp?v=6.6.1" alt="Android 安裝步驟 4：確認安裝" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/android_step5.webp?v=6.6.1" alt="Android 安裝步驟 5：桌面上出現捷徑" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
-            <div class="slide"><img src="images/android_step6.webp?v=6.6.1" alt="Android 安裝步驟 6：點選捷徑開啟" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step1.webp?v=6.6.2" alt="Android 安裝步驟 1：以 Chrome 開啟時刻表" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step2.webp?v=6.6.2" alt="Android 安裝步驟 2：開啟右上角更多選單" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step3.webp?v=6.6.2" alt="Android 安裝步驟 3：選擇安裝應用程式" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step4.webp?v=6.6.2" alt="Android 安裝步驟 4：確認安裝" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step5.webp?v=6.6.2" alt="Android 安裝步驟 5：桌面上出現捷徑" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="slide"><img src="images/android_step6.webp?v=6.6.2" alt="Android 安裝步驟 6：點選捷徑開啟" width="480" height="1014" loading="lazy" decoding="async" draggable="false"></div>
           </div>
         </div>
         <div class="slider__nav">
@@ -446,13 +446,13 @@
   </div>
 </div>
 
-<script src="js/data.js?v=6.6.1" defer></script>
+<script src="js/data.js?v=6.6.2" defer></script>
 <!-- i18n.js 必須排在 core.js 之前：core.js 的 T() 開機就會查表。
      它本身不依賴 data.js，但放在 data.js 之後可確保 data 先可用。 -->
-<script src="js/i18n.js?v=6.6.1" defer></script>
+<script src="js/i18n.js?v=6.6.2" defer></script>
 <!-- holidays.js 必須排在 core.js 之前：core.js 開機時就會讀 window.LHBS_CALENDAR -->
-<script src="js/holidays.js?v=6.6.1" defer></script>
-<script src="js/core.js?v=6.6.1" defer></script>
+<script src="js/holidays.js?v=6.6.2" defer></script>
+<script src="js/core.js?v=6.6.2" defer></script>
 <script>
 if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
   window.addEventListener('load', function () {

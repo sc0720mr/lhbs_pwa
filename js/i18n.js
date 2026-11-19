@@ -304,6 +304,7 @@
       /* ---- 公告 / 離線 ---- */
       'alert.title': 'Notice',
       'alert.close': 'Close notice',
+      'alert.message': 'Starting Saturday, Nov. 21, 2026, the Community Shuttle Bus (Holiday Route) will add a new stop at Nangang Vocational High School, located at the same stop as Bus 591. Residents are welcome to use this stop for both outbound and return trips!',
       'alert.typhoon': 'Typhoon day today — services may change. Please check the community notice board.',
       'offline.note': 'You are offline. Showing the last cached version; the timetable still works.',
 

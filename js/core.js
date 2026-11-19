@@ -23,7 +23,7 @@
        3) <meta name="app-version"> 與 <meta name="app-cache-version">
      三者不一致，就代表檔案沒蓋好或快取還在供應舊版。
      --------------------------------------------------------------------- */
-  var BUILD = 'LHBS build 6.6.3 / cache v45';
+  var BUILD = 'LHBS build 6.6.4 / cache v46';
   try {
     console.log('%c' + BUILD, 'background:#08B898;color:#04231C;font-weight:700;padding:3px 8px;border-radius:2px');
   } catch (e) { /* console 不可用時忽略 */ }

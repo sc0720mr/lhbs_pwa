@@ -33,7 +33,7 @@
       /* ---- 站名 / 品牌 ---- */
       'brand.title': '水蓮車班時刻表',
       'brand.en': 'Lotus Hill Bus Schedule',
-      'brand.aria': '水蓮社巴時刻表，回到首頁',
+      'brand.aria': '水蓮車班時刻表，回到首頁',
 
       /* ---- 分頁 ---- */
       'tab.schedule': '時刻表',
@@ -115,7 +115,7 @@
       'rel.hourAfter': '{h} 小時',
       'rel.hourSuffix': '後',
       'rel.minSuffix': ' 分',
-      'rel.hourShort': '{h}時',
+      'rel.hourShort': '{h} 時',
 
       /* ---- 目的地 / 停駛 ---- */
       'dest.to': '往',
@@ -694,9 +694,9 @@
      社區自營單位用意譯（服務中心 → Service Center），
      個人姓名用漢語拼音（董文燕 → Dong Wenyan）。 */
   var PHONE_UNITS = {
-    '城事不動產': 'City Realty',
-    '城事 - 董文燕': 'City Realty — Dong Wenyan',
-    '城事 - 虞明思': 'City Realty — Yu Mingsi',
+    '城事不動產': 'CITYKEY REAL ESTATE & PROPERTY MANAGEMENT',
+    '城事 - 董文燕': 'CITYKEY REAL ESTATE & PROPERTY MANAGEMENT — Dong Wenyan',
+    '城事 - 虞明思': 'CITYKEY REAL ESTATE & PROPERTY MANAGEMENT — Yu Mingsi',
     '服務中心': 'Service Center',
     '中控大門警衛': 'Main Gate Security',
     '生活館': 'Life Center',

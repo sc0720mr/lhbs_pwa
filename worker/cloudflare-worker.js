@@ -162,7 +162,7 @@ async function getToken(env) {
   // [1] 全部失敗 → 用上一顆還能用的 token 撐一下
   if (lastGoodToken) {
     cachedToken = lastGoodToken;
-    tokenExpireAt = Date.now() + 30000; // 30 秒後再試一次
+    tokenExpireAt = Date.now() + 60000; // 30 秒後再試一次
     return cachedToken;
   }
 

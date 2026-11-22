@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-15T21:15:23+08:00",
+ "generatedAt": "2026-11-22T14:27:15+08:00",
  "source": "TDX 新北市公車 EstimatedTimeOfArrival / StopOfRoute（站序對齊）",
  "sections": [
   {
@@ -33,93 +33,93 @@
    "stops": [
     {
      "stopID": "205913",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 2020,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204478",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 2071,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204479",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 2110,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204480",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 2268,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204481",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 2319,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204482",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 2387,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204483",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 2450,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204484",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 2512,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204485",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 2631,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204486",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 2693,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204487",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 2848,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204488",
-     "estimateTime": 272,
-     "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 3142,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204489",
-     "estimateTime": 326,
-     "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 3207,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204490",
-     "estimateTime": 482,
-     "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 3331,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204491",
-     "estimateTime": 549,
-     "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 3426,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     }
    ]
   },
@@ -130,87 +130,87 @@
    "stops": [
     {
      "stopID": "204464",
-     "estimateTime": 675,
-     "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "estimateTime": 3555,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204465",
-     "estimateTime": 756,
+     "estimateTime": 0,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204466",
-     "estimateTime": 906,
+     "estimateTime": 112,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204467",
-     "estimateTime": 965,
+     "estimateTime": 152,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204468",
-     "estimateTime": 1180,
+     "estimateTime": 367,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204469",
-     "estimateTime": 1328,
+     "estimateTime": 460,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204470",
-     "estimateTime": 1453,
+     "estimateTime": 574,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204471",
-     "estimateTime": 1550,
+     "estimateTime": 659,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204472",
-     "estimateTime": 1689,
+     "estimateTime": 727,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204473",
-     "estimateTime": 1747,
+     "estimateTime": 766,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204474",
-     "estimateTime": 1804,
+     "estimateTime": 819,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204475",
-     "estimateTime": 1964,
+     "estimateTime": 925,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204476",
-     "estimateTime": 2077,
+     "estimateTime": 1014,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     },
     {
      "stopID": "204477",
-     "estimateTime": 2148,
+     "estimateTime": 1096,
      "stopStatus": 0,
-     "srcUpdateTime": "2026-10-15T21:14:15+08:00"
+     "srcUpdateTime": "2026-11-22T14:27:00+08:00"
     }
    ]
   },
@@ -221,231 +221,231 @@
    "stops": [
     {
      "stopID": "219525",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4420,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181402",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4575,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181403",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4606,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181404",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4638,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181405",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4662,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181406",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4727,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181407",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4846,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181408",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4919,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181409",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5067,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181410",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5156,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181411",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5185,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181412",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5306,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181413",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5356,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181414",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5372,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181415",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 63,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181416",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 157,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181417",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 241,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181418",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 275,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181419",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 312,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181420",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 382,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181421",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 432,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181422",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 453,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181423",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 484,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181424",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 555,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181425",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 579,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "203213",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 626,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181426",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 718,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181427",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 751,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181428",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 794,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181429",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 888,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181430",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 943,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181431",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1033,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181432",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1062,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181433",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1106,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181434",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1141,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "194261",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1190,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "194262",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1283,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "194264",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1344,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     }
    ]
   },
@@ -456,243 +456,243 @@
    "stops": [
     {
      "stopID": "194264",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1344,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "219532",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1457,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181436",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1509,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181437",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1534,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181438",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1582,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181439",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1654,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181440",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1687,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181441",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1744,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181442",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1772,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181443",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1858,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181444",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1918,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181445",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2016,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181446",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2109,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181447",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2129,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181448",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2215,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181449",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2307,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181450",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2332,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "203214",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2386,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181451",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 95,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181452",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 122,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181453",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 209,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181454",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 249,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181455",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 308,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181456",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 348,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181457",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 407,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181458",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 510,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181459",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 596,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181460",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 712,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181461",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 749,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181462",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 789,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181463",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 851,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181464",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 978,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181465",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1082,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181466",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1233,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181467",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1270,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181468",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1449,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181469",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1498,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181470",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1545,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181471",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1571,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "194266",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1798,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     }
    ]
   },
@@ -703,249 +703,249 @@
    "stops": [
     {
      "stopID": "219525",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4420,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181402",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4575,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181403",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4606,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181404",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4638,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181405",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4662,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181406",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4727,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181407",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4846,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181408",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 4919,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181409",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5067,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181410",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5156,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181411",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5185,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181412",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5306,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181413",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5356,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181414",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 5372,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181415",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 63,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181416",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 157,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181417",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 241,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181418",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 275,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181419",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 312,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181420",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 382,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181421",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 432,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181422",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 453,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181423",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 484,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181424",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 555,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181425",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 579,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "203213",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 626,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181426",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 718,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181427",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 751,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181428",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 794,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181429",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 888,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181430",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 943,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181431",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1033,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181432",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1062,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181433",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1106,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181434",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1141,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "194261",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1190,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "194262",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1283,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "219526",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 6766,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "219527",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 6918,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "219528",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 6983,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "219529",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 7029,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     }
    ]
   },
@@ -956,261 +956,261 @@
    "stops": [
     {
      "stopID": "219529",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 7029,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "219530",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 7093,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "219531",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 7169,
+     "stopStatus": 1,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "194264",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1344,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "219532",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1457,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181436",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1509,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181437",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1534,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181438",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1582,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181439",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1654,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181440",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1687,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181441",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1744,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181442",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1772,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181443",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1858,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181444",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1918,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181445",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2016,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181446",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2109,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181447",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2129,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181448",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2215,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181449",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2307,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181450",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2332,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "203214",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 2386,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181451",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 95,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181452",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 122,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181453",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 209,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181454",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 249,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181455",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 308,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181456",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 348,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181457",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 407,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181458",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 510,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181459",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 596,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181460",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 712,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181461",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 749,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181462",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 789,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181463",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 851,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181464",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 978,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181465",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1082,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181466",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1233,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181467",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1270,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181468",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1449,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181469",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1498,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181470",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1545,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "181471",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1571,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     },
     {
      "stopID": "194266",
-     "estimateTime": null,
-     "stopStatus": 3,
-     "srcUpdateTime": "2026-10-15T21:14:55+08:00"
+     "estimateTime": 1798,
+     "stopStatus": 0,
+     "srcUpdateTime": "2026-11-22T14:27:05+08:00"
     }
    ]
   }

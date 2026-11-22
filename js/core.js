@@ -23,7 +23,7 @@
        3) <meta name="app-version"> 與 <meta name="app-cache-version">
      三者不一致，就代表檔案沒蓋好或快取還在供應舊版。
      --------------------------------------------------------------------- */
-  var BUILD = 'LHBS build 6.6.9 / cache v51';
+  var BUILD = 'LHBS build 6.6.10 / cache v53';
   try {
     console.log('%c' + BUILD, 'background:#08B898;color:#04231C;font-weight:700;padding:3px 8px;border-radius:2px');
   } catch (e) { /* console 不可用時忽略 */ }
@@ -1439,10 +1439,21 @@
               function (e) { inFlight = false; throw e; });
     }
 
+    /* 倒數文字：樣板若忘了 {n} 佔位符，T() 會回傳「 秒後更新」這種沒有數字的字串，
+       使用者就看不到倒數。這裡做最後一道防線 —— 只要譯文裡沒有出現數字，
+       就自己把秒數補回去，確保倒數永遠看得到。 */
+    function countdownText(left) {
+      var tpl = T('tdx.secLater', { n: left });
+      if (tpl && String(tpl).indexOf(String(left)) !== -1) return tpl;
+      /* 譯文缺 {n}：沿用譯文的單位字尾，前面補上秒數 */
+      var tail = tpl ? String(tpl).replace(/^\s+/, '') : '秒後更新';
+      return left + (isEn() ? ' ' : '') + tail;
+    }
+
     function tick() {
       if (!nextAt) { setCountdown(''); return; }
       var left = Math.max(0, Math.ceil((nextAt - Date.now()) / 1000));
-      setCountdown(left > 0 ? T('tdx.secLater', { n: left }) : T('tdx.updating'));
+      setCountdown(left > 0 ? countdownText(left) : T('tdx.updating'));
       if (left <= 0 && !inFlight) update(true);
     }
 

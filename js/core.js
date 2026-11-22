@@ -23,7 +23,7 @@
        3) <meta name="app-version"> 與 <meta name="app-cache-version">
      三者不一致，就代表檔案沒蓋好或快取還在供應舊版。
      --------------------------------------------------------------------- */
-  var BUILD = 'LHBS build 6.6.7 / cache v49';
+  var BUILD = 'LHBS build 6.6.8 / cache v50';
   try {
     console.log('%c' + BUILD, 'background:#08B898;color:#04231C;font-weight:700;padding:3px 8px;border-radius:2px');
   } catch (e) { /* console 不可用時忽略 */ }
@@ -52,7 +52,7 @@
      --------------------------------------------------------------------- */
   var CONFIG = {
     TDX_PROXY_URL: 'https://lhbs-tdx-proxy.sc0720mr.workers.dev',
-    POLL_MS: 30000,
+    POLL_MS: 60000,
     STALE_MS: 6 * 60 * 1000,
     BOARDING_KEY: 'lhbs_boarding_ack',
     BOARDING_HOURS: 24,
@@ -1252,11 +1252,18 @@
     function setMode(mode) {
       var el = document.getElementById('tdxMode');
       var dot = document.getElementById('tdxDot');
-      if (el) {
-        el.className = 'mode ' + (mode === 'live' ? 'is-live' : mode === 'snapshot-stale' ? 'is-stale' : mode === 'snapshot' ? 'is-snap' : 'is-error');
-        el.textContent = mode === 'live' ? T('tdx.modeLive') : mode === 'snapshot-stale' ? T('tdx.modeStale') : mode === 'snapshot' ? T('tdx.modeSnapshot') : T('tdx.modeError');
-      }
-      if (dot) dot.className = 'dot ' + (mode === 'live' ? 'is-live' : mode === 'snapshot-stale' ? 'is-stale' : 'is-idle');
+      var cls = mode === 'live' ? 'is-live'
+              : mode === 'live-stale' ? 'is-stale'
+              : mode === 'snapshot-stale' ? 'is-stale'
+              : mode === 'snapshot' ? 'is-snap'
+              : 'is-error';
+      var label = mode === 'live' ? T('tdx.modeLive')
+                : mode === 'live-stale' ? '即時·延遲'
+                : mode === 'snapshot-stale' ? T('tdx.modeStale')
+                : mode === 'snapshot' ? T('tdx.modeSnapshot')
+                : T('tdx.modeError');
+      if (el) { el.className = 'mode ' + cls; el.textContent = label; }
+      if (dot) dot.className = 'dot ' + (mode === 'live' ? 'is-live' : mode === 'live-stale' ? 'is-stale' : 'is-idle');
     }
     function setCountdown(text) {
       var el = document.getElementById('tdxCountdown');
@@ -1364,8 +1371,13 @@
         return res.json();
       }).then(function (json) {
         var rows = json && (json.data || json);
-        if (Array.isArray(rows) && !rows.length) return {};
-        return indexFromEtaRows(rows);
+        if (Array.isArray(rows) && !rows.length) return { map: {}, stale: false, generatedAt: null };
+        return {
+          map: indexFromEtaRows(rows),
+          stale: !!(json && json.stale),
+          generatedAt: (json && json.generatedAt) || null,
+          staleReason: (json && json.staleReason) || ''
+        };
       }).catch(function () { return null; });
     }
 
@@ -1383,14 +1395,28 @@
           });
 
       return loadSections.then(function () {
-        return (PROXY_URL ? fetchLive() : Promise.resolve(null)).then(function (liveMap) {
+        return (PROXY_URL ? fetchLive() : Promise.resolve(null)).then(function (live) {
           var result, mode;
-          if (liveMap) {
-            mode = 'live';
-            result = renderIndex(liveMap);
-            lastGeneratedAt = new Date().toISOString();
-            setMode('live');
-            setSync(T('tdx.updatedN') + result.shown + T('tdx.updatedStops') + clockText());
+          if (live) {
+            result = renderIndex(live.map);
+            if (live.generatedAt) lastGeneratedAt = live.generatedAt;
+            if (live.stale) {
+              mode = 'live-stale';
+              setMode('live-stale');
+              var ageSec = lastGeneratedAt
+                ? Math.max(0, Math.round((Date.now() - Date.parse(lastGeneratedAt)) / 1000))
+                : null;
+              setSync(
+                'TDX 暫時取不到，顯示 ' +
+                  (ageSec === null ? '上一次' : ageSec + ' 秒前') +
+                  ' 的資料' + (live.staleReason ? '（' + live.staleReason + '）' : ''),
+                true
+              );
+            } else {
+              mode = 'live';
+              setMode('live');
+              setSync(T('tdx.updatedN') + result.shown + T('tdx.updatedStops') + clockText());
+            }
           } else {
             mode = 'snapshot';
             result = renderIndex(indexFromSections(sectionsCache));

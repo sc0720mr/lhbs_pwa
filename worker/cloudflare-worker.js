@@ -222,6 +222,55 @@ async function proxyRaw(url, env) {
   return tdxGet((path || '/') + search, token);
 }
 
+/**
+ * Cron 預熱：把 TDX token 提前取好並寫進 KV
+ * ---------------------------------------------------------------------------
+ * 為什麼需要：token 原本只存在模組變數（每個 isolate 各一份），isolate 一被
+ * 回收就要重新打授權端點；冷啟動時若剛好撞上 TDX 429，第一個使用者就會拿到
+ * 500。由 Cron 每 10 分鐘先跑一次，KV 裡的 token 永遠是新鮮的，冷啟動一定
+ * 命中 KV，不會走到授權端點。
+ *
+ * 走的是原本的 getToken(env) —— 同一條路徑、同一套重試與 KV 寫入邏輯，
+ * 沒有另外發明取 token 的方法。
+ *
+ * 任何錯誤都只印 log，不往外丟，避免 cron 執行被標記為失敗。
+ */
+async function warmToken(env) {
+  const startedAt = Date.now();
+  try {
+    if (!env || !env.CLIENT_ID || !env.CLIENT_SECRET) {
+      console.warn('[cron] 預熱略過：尚未設定 CLIENT_ID / CLIENT_SECRET');
+      return;
+    }
+
+    const token = await getToken(env);
+    if (!token) {
+      console.warn('[cron] 預熱失敗：getToken 回傳空值');
+      return;
+    }
+
+    // 確認 token 真的落到 KV（沒綁 KV 時這步會是 null，屬正常）
+    const kv = await readTokenFromKV(env);
+    const kvOk = !!(kv && kv.token);
+
+    console.log(
+      '[cron] 預熱完成 ' +
+        JSON.stringify({
+          kvBound: !!(env && env.TOKEN_KV),
+          kvHasToken: kvOk,
+          tokenExpireAt: tokenExpireAt ? new Date(tokenExpireAt).toISOString() : null,
+          ms: Date.now() - startedAt,
+        })
+    );
+  } catch (err) {
+    // 預熱失敗不該讓 cron 掛掉，也不該影響任何使用者請求
+    console.error(
+      '[cron] 預熱失敗：' + String((err && err.message) || err) +
+        ' (ms=' + (Date.now() - startedAt) + ')'
+    );
+  }
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -342,4 +391,9 @@ export default {
       return json({ error: String((error && error.message) || error) }, 500, env);
     }
   },
+  // Cron 觸發時執行（wrangler.toml 的 [triggers] crons 會呼叫這裡）
+  async scheduled(event, env, ctx) {
+    console.log('[cron] 觸發 cron=' + ((event && event.cron) || '(unknown)'));
+    ctx.waitUntil(warmToken(env));
+  }
 };

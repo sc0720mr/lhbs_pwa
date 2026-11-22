@@ -1,0 +1,66 @@
+# =============================================================================
+# Cloudflare Worker 設定 — TDX 即時到站代理
+# -----------------------------------------------------------------------------
+# 放在 repo 根目錄（跟 index.html 同一層），檔名必須是 wrangler.toml。
+#
+# 部署：npx wrangler deploy
+#
+# ⚠️ 這個檔案會被 commit 上 GitHub，所以「絕對不要」把 CLIENT_SECRET 寫進來。
+#    Secret 請用：npx wrangler secret put CLIENT_SECRET
+# =============================================================================
+
+name = "lhbs-tdx-proxy"
+
+# Worker 程式碼的實際路徑（相對於這個 wrangler.toml 所在位置）
+main = "worker/cloudflare-worker.js"
+
+# 模組格式（檔案用的是 export default { fetch, scheduled }）
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# -----------------------------------------------------------------------------
+# KV namespace：跨 isolate 共用 TDX token
+# -----------------------------------------------------------------------------
+# 建立方式（只需做一次）：
+#   npx wrangler kv namespace create TOKEN_KV
+#
+# 指令會印出類似：
+#   [[kv_namespaces]]
+#   binding = "TOKEN_KV"
+#   id = "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
+#
+# 把那個 id 貼到下面 <在這裡貼上你的 KV namespace id> 的位置。
+# 沒填 id 就部署，wrangler 會直接報錯，不會偷偷部署成功。
+[[kv_namespaces]]
+binding = "TOKEN_KV"
+id = "<在這裡貼上你的 KV namespace id>"
+
+# -----------------------------------------------------------------------------
+# Cron Trigger：每 10 分鐘預熱一次 token
+# -----------------------------------------------------------------------------
+# 部署成功後，wrangler 輸出會有一行：
+#   Schedule: */10 * * * *
+# 這行就是 cron 生效的證據。
+[triggers]
+crons = ["*/10 * * * *"]
+
+# -----------------------------------------------------------------------------
+# 一般環境變數（非機密，可以寫在這裡）
+# -----------------------------------------------------------------------------
+# CLIENT_ID 不是機密，但為了避免你手動同步兩份，建議也用 secret 指令一起設：
+#   npx wrangler secret put CLIENT_ID
+#   npx wrangler secret put CLIENT_SECRET
+#
+# 若你想把 CLIENT_ID 寫在這裡也可以（取消下面兩行的註解）：
+# [vars]
+# CLIENT_ID = "你的 Client Id"
+# ROUTES = "591,F913"
+# ALLOWED_ORIGIN = "*"
+
+# -----------------------------------------------------------------------------
+# 觀察 log（部署後另開一個終端機執行）
+# -----------------------------------------------------------------------------
+#   npx wrangler tail
+# 每 10 分鐘應該看到：
+#   [cron] 觸發 cron=*/10 * * * *
+#   [cron] 預熱完成 {"kvBound":true,"kvHasToken":true,...}
